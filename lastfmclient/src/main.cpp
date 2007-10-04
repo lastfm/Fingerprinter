@@ -29,7 +29,7 @@
 #include "mbid_mp3.h"   // for musicbrainz ID
 
 // taglib
-#include <fileref.h>
+#include <tag/fileref.h>
 #include <tag.h>
 #include <id3v2tag.h>
 #include <mpegfile.h>
