@@ -373,7 +373,7 @@ void OptFFT::applyHann( float* pInData, const size_t dataSize )
 {
    assert (dataSize == 2048);
 
-   for ( int i = 0; i < dataSize; ++i )
+   for ( size_t i = 0; i < dataSize; ++i )
       pInData[i] *= hann[i];
 }
 
