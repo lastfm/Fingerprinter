@@ -5,3 +5,4 @@ CONFIG += ordered
 
 SUBDIRS = fplib lastfmfpclient
 
+unix:system( cp lastfmfpclient/lastfmfpclient . )
