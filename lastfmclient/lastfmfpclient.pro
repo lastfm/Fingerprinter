@@ -13,4 +13,4 @@ SOURCES	= src/main.cpp \
 
 DEFINES   = NDEBUG
 INCLUDEPATH = src /usr/local/include/taglib
-LIBS  = -L../fplib/ -lfplib
+LIBS  = -L../fplib/ -lfplib -lfftw3f -lmad -ltag -lcurl
