@@ -8,7 +8,6 @@ HEADERS	= src/HTTPClient.h \
 
 SOURCES	= src/main.cpp \
 	  src/HTTPClient.cpp \
-	  src/OptFFT.cpp \
           src/Sha256.cpp \
 	  src/Sha256File.cpp
 
