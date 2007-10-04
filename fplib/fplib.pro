@@ -1,5 +1,5 @@
-TEMPLATE	= staticlib
-CONFIG		= warn_on release
+TEMPLATE	= lib
+CONFIG		= warn_on staticlib
 HEADERS	= include/FingerprintExtractor.h \
 	  src/CircularArray.h \
 	  src/Filter.h \
