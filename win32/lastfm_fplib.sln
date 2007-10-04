@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lastfmclient", "..\lastfmclient\win32\lastfmclient.vcproj", "{51D16588-9F49-427E-8A8D-C23CEBB7B87C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fplib", "..\fplib\win32\fplib.vcproj", "{2B93F386-6AD8-4E69-9483-AFA2D50C6D15}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3decoder", "..\mp3decoder\win32\mp3decoder.vcproj", "{F8DE2629-313D-47E0-983F-6E0453635E98}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fplib", "..\fplib\win32\fplib.vcproj", "{49D7B724-92F8-4B93-8FFA-5F7464A50F6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +15,10 @@ Global
 		{51D16588-9F49-427E-8A8D-C23CEBB7B87C}.Debug|Win32.Build.0 = Debug|Win32
 		{51D16588-9F49-427E-8A8D-C23CEBB7B87C}.Release|Win32.ActiveCfg = Release|Win32
 		{51D16588-9F49-427E-8A8D-C23CEBB7B87C}.Release|Win32.Build.0 = Release|Win32
-		{2B93F386-6AD8-4E69-9483-AFA2D50C6D15}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2B93F386-6AD8-4E69-9483-AFA2D50C6D15}.Debug|Win32.Build.0 = Debug|Win32
-		{2B93F386-6AD8-4E69-9483-AFA2D50C6D15}.Release|Win32.ActiveCfg = Release|Win32
-		{2B93F386-6AD8-4E69-9483-AFA2D50C6D15}.Release|Win32.Build.0 = Release|Win32
-		{F8DE2629-313D-47E0-983F-6E0453635E98}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F8DE2629-313D-47E0-983F-6E0453635E98}.Debug|Win32.Build.0 = Debug|Win32
-		{F8DE2629-313D-47E0-983F-6E0453635E98}.Release|Win32.ActiveCfg = Release|Win32
-		{F8DE2629-313D-47E0-983F-6E0453635E98}.Release|Win32.Build.0 = Release|Win32
+		{49D7B724-92F8-4B93-8FFA-5F7464A50F6D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{49D7B724-92F8-4B93-8FFA-5F7464A50F6D}.Debug|Win32.Build.0 = Debug|Win32
+		{49D7B724-92F8-4B93-8FFA-5F7464A50F6D}.Release|Win32.ActiveCfg = Release|Win32
+		{49D7B724-92F8-4B93-8FFA-5F7464A50F6D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
