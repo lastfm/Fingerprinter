@@ -13,5 +13,5 @@ SOURCES	= src/main.cpp \
 	  src/Sha256File.cpp
 
 DEFINES   = NDEBUG
-INCLUDEPATH = src /usr/local/include/taglib
+INCLUDEPATH = src /usr/local/include/taglib /usr/include/taglib
 LIBS  = -L../fplib/ -lfplib -lfftw3f -lmad -ltag -lcurl
