@@ -21,8 +21,9 @@
 
 // for fingerprint
 #include "../../fplib/include/FingerprintExtractor.h"
-#include "MP3_Source.h"
-#include "HTTPClient.h"
+
+#include "MP3_Source.h" // to decode mp3s
+#include "HTTPClient.h" // for connection
 
 #include "Sha256File.h" // for SHA 256
 #include "mbid_mp3.h"   // for musicbrainz ID
@@ -34,17 +35,15 @@
 #include <mpegfile.h>
 
 #include <iostream>
-#include <ctime>
 #include <map>
 
 using namespace std;
 
-//#ifdef WIN32
-//#define SLASH '\\'
-//#else
-//#define SLASH '/'
-//#endif
-//
+#ifdef WIN32
+#define SLASH '\\'
+#else
+#define SLASH '/'
+#endif
 
 // DO NOT CHANGE THOSE!
 const int  FP_PROTOCOL_VERSION = 1;
@@ -55,10 +54,10 @@ const char HTTP_DATA_NAME[] = "fpdata";
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+// just turn it into a string. Similar to boost::lexical_cast
 template <typename T>
 string toString(const T& val)
 {
-   // similar to boost::lexical_cast
    ostringstream oss;
    oss << val;
    return oss.str();
@@ -98,10 +97,9 @@ void addEntry ( map<string, string>& urlParams, const string& key, const string&
 
 // -----------------------------------------------------------------------------
 
+// gather some data from the (mp3) file
 void getFileInfo( const string& fileName, map<string, string>& urlParams )
 {
-
-   urlParams["fpversion"] = toString(FP_PROTOCOL_VERSION);
 
    //////////////////////////////////////////////////////////////////////////
    // Musicbrainz ID
@@ -165,10 +163,15 @@ int main(int argc, char* argv[])
  
    if ( argc < 2 )
    {
-      cout << argv[0] << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
+      string fileName = string(argv[0]);
+      size_t lastSlash = fileName.find_last_of(SLASH);
+      if ( lastSlash != string::npos )
+         fileName = fileName.substr(lastSlash+1);      
+
+      cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
       cout << "A minimal fingerprint client, public release." << endl;
       cout << "Copyright (C) 2007 by Last.fm (MIR)" << endl << endl;
-      cout << "Usage: " << argv[0] << " yourMp3File.mp3" << endl;
+      cout << "Usage: " << fileName << " yourMp3File.mp3" << endl;
       exit(0);
    }
 
@@ -183,7 +186,7 @@ int main(int argc, char* argv[])
          exit(1);
       }
 
-      // checks if it is an mp3
+      // checks if it is an mp3 (very unelegant)
       size_t filelen = mp3FileName.length();
       if ( filelen < 5 || mp3FileName.substr(filelen-4, 4) != ".mp3" )
       {
@@ -193,19 +196,23 @@ int main(int argc, char* argv[])
 
    }
 
+   // this map holds the parameters that will be put into the URL
    map<string, string> urlParams;
+
    getFileInfo(mp3FileName, urlParams);
 
    int duration, samplerate, bitrate, nchannels;
    MP3_Source::getInfo(mp3FileName, duration, samplerate, bitrate, nchannels);
 
-   urlParams["duration"] = toString(duration);
-   urlParams["username"] = PUBLIC_CLIENT_NAME;
+   urlParams["fpversion"]  = toString(FP_PROTOCOL_VERSION);
+   urlParams["duration"]   = toString(duration);
+   urlParams["username"]   = PUBLIC_CLIENT_NAME; // replace with username if possible
    urlParams["samplerate"] = toString(samplerate);
 
-   // this will extract the fingerprint
+   // This will extract the fingerprint
+   // IMPORTANT: FingerprintExtractor assumes the data starts from the beginning of the file!
    fingerprint::FingerprintExtractor fextr;
-   fextr.initForQuery(samplerate, nchannels);
+   fextr.initForQuery(samplerate, nchannels); // initialize for query
 
    // that's for the mp3
    MP3_Source mp3Source;
@@ -220,11 +227,13 @@ int main(int argc, char* argv[])
       //////////////////////////////////////////////////////////////////////////      
       // that's not really necessary: it's just to speed up things
       mp3Source.skip( static_cast<int>(fextr.getToSkipMs()) );
+      // send a null pointer, since that's data it's ignored anyway
       fextr.process( 0, static_cast<size_t>(samplerate * nchannels * (fextr.getToSkipMs() / 1000.0)) );
       //////////////////////////////////////////////////////////////////////////      
 
       for (;;)
       {
+         // read some data from the mp3
          size_t readData = mp3Source.updateBuffer(pPCMBuffer, bufSize);
          if ( readData == 0 )
          {
@@ -232,12 +241,16 @@ int main(int argc, char* argv[])
             exit(1);
          }
 
+         // Process to create the fingerprint. If process returns true
+         // it means he's happy with what he has.
          if ( fextr.process( pPCMBuffer, readData, readData != bufSize ) )
             break;
       }
 
+      // get the fingerprint data
       pair<const char*, size_t> fpData = fextr.getFingerprint();
 
+      // send the fingerprint data
       HTTPClient client;
       string c = client.postRawObj( PUBLIC_SERVER_NAME, urlParams, 
                                     fpData.first, fpData.second, 
@@ -250,7 +263,9 @@ int main(int argc, char* argv[])
       exit(1);
    }
 
+   // clean up!
    delete [] pPCMBuffer;
+
    // bye bye! :)
    return 0;
 }
