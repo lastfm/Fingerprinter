@@ -23,7 +23,7 @@
 
 //#include <deque>
 #include <limits>
-#include "containers/CircularArray.h"
+#include "CircularArray.h"
 
 template <typename T>
 class FloatingAverage
