@@ -34,11 +34,14 @@
 #include <id3v2tag.h>
 #include <mpegfile.h>
 
+// stl
 #include <iostream>
+#include <fstream>
 #include <map>
 
 using namespace std;
 
+// hacky!
 #ifdef WIN32
 #define SLASH '\\'
 #else
@@ -46,10 +49,10 @@ using namespace std;
 #endif
 
 // DO NOT CHANGE THOSE!
-const int  FP_PROTOCOL_VERSION = 1;
+const int  FP_PROTOCOL_VERSION  = 1;
 const char PUBLIC_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/";
 const char PUBLIC_CLIENT_NAME[] = "FP Beta 1";
-const char HTTP_DATA_NAME[] = "fpdata";
+const char HTTP_DATA_NAME[]     = "fpdata";
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -89,6 +92,8 @@ string simpleTrim( const string& str )
 
 void addEntry ( map<string, string>& urlParams, const string& key, const string& val )
 {
+   if ( key.empty() || val.empty() )
+      return;
    if ( urlParams.find(key) != urlParams.end() )
       return; // do not add something that was already there
 
@@ -108,12 +113,12 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
       urlParams["mbid"] = string(mbid_ch);
 
    //////////////////////////////////////////////////////////////////////////
-   //// Filename (optional)
-   //size_t lastSlash = fileName.find_last_of(SLASH);
-   //if ( lastSlash != string::npos )
-   //   urlParams["filename"] = fileName.substr(lastSlash+1);
-   //else
-   //   urlParams["filename"] = fileName;
+   // Filename (optional)
+   size_t lastSlash = fileName.find_last_of(SLASH);
+   if ( lastSlash != string::npos )
+      urlParams["filename"] = fileName.substr(lastSlash+1);
+   else
+      urlParams["filename"] = fileName;
 
    ///////////////////////////////////////////////////////////////////////////
    // SHA256  
@@ -131,7 +136,6 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
    if( f.isValid() && f.tag() ) 
    {
       TagLib::Tag* pTag = f.tag();
-      string tmpStr;
 
       // artist
       addEntry( urlParams, "artist", string(pTag->artist().toCString()) );
@@ -146,6 +150,7 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
       if ( pTag->track() > 0 )
          addEntry( urlParams, "tracknum", toString(pTag->track()) );
 
+      // year
       if ( pTag->year() > 0 )
          addEntry( urlParams, "year", toString(pTag->year()) );
 
@@ -216,8 +221,9 @@ int main(int argc, char* argv[])
 
    // that's for the mp3
    MP3_Source mp3Source;
-   const size_t bufSize = 131072;
-   short* pPCMBuffer = new short[bufSize];
+   // the buffer can be any size, but FingerprintExtractor is happier (read: faster) with 2^x
+   const size_t PCMBufSize = 131072; 
+   short* pPCMBuffer = new short[PCMBufSize];
 
    try
    {
@@ -234,7 +240,7 @@ int main(int argc, char* argv[])
       for (;;)
       {
          // read some data from the mp3
-         size_t readData = mp3Source.updateBuffer(pPCMBuffer, bufSize);
+         size_t readData = mp3Source.updateBuffer(pPCMBuffer, PCMBufSize);
          if ( readData == 0 )
          {
             cerr << "ERROR: Insufficient input data!" << endl;
@@ -243,7 +249,7 @@ int main(int argc, char* argv[])
 
          // Process to create the fingerprint. If process returns true
          // it means he's happy with what he has.
-         if ( fextr.process( pPCMBuffer, readData, readData != bufSize ) )
+         if ( fextr.process( pPCMBuffer, readData, readData != PCMBufSize ) )
             break;
       }
 
