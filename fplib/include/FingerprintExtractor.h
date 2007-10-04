@@ -27,6 +27,7 @@
 #define __FINGERPRINT_EXTRACTOR_H
 
 #include <utility> // for pair
+#include <cstddef> // for size_t
 
 namespace fingerprint {
 
