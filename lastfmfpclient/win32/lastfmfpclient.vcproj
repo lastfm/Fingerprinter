@@ -4,7 +4,7 @@
 	Version="8.00"
 	Name="lastfmfpclient"
 	ProjectGUID="{51D16588-9F49-427E-8A8D-C23CEBB7B87C}"
-	RootNamespace="lastfmclient"
+	RootNamespace="lastfmfpclient"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

@@ -198,10 +198,6 @@
 				RelativePath="..\src\SimpleDownsampler.hpp"
 				>
 			</File>
-			<Filter
-				Name="needed"
-				>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
