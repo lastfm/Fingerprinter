@@ -30,6 +30,7 @@
 #include <deque>
 #include <vector>
 #include <stdexcept>
+#include <cmath>
 
 #include <samplerate.h> // libsamplerate
 
