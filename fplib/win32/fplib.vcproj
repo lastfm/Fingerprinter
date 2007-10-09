@@ -190,14 +190,6 @@
 				RelativePath="..\src\OptFFT.h"
 				>
 			</File>
-			<File
-				RelativePath="..\src\SimpleDownsampler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\SimpleDownsampler.hpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

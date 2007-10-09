@@ -60,10 +60,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="taglib.lib libmad.lib libfftw3f-3.lib libcurl.lib fplib.lib"
+				AdditionalDependencies="taglib.lib libmad.lib libfftw3f-3.lib libcurl.lib fplib.lib libsamplerate.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="taglib.lib libmad.lib libfftw3f-3.lib libcurl.lib fplib.lib"
+				AdditionalDependencies="taglib.lib libmad.lib libfftw3f-3.lib libcurl.lib fplib.lib libsamplerate.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				IgnoreDefaultLibraryNames="LIBCMT.lib"

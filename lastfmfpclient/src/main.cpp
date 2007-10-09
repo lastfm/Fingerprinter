@@ -51,7 +51,7 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const int  FP_PROTOCOL_VERSION  = 1;
 const char PUBLIC_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[] = "FP Beta 1";
+const char PUBLIC_CLIENT_NAME[] = "FP Beta 1.1";
 const char HTTP_DATA_NAME[]     = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -260,7 +260,8 @@ int main(int argc, char* argv[])
       HTTPClient client;
       string c = client.postRawObj( PUBLIC_SERVER_NAME, urlParams, 
                                     fpData.first, fpData.second, 
-                                    HTTP_DATA_NAME, true );
+                                    //HTTP_DATA_NAME, true );
+                                    HTTP_DATA_NAME, false );
       cout << c << flush;
    }
    catch (const std::exception& e)

@@ -5,9 +5,7 @@ HEADERS	= include/FingerprintExtractor.h \
 	  src/Filter.h \
 	  src/FloatingAverage.h \
 	  src/fp_helper_fun.h \
-	  src/OptFFT.h \
-	  src/SimpleDownsampler.h \
-	  src/SimpleDownsampler.hpp
+	  src/OptFFT.h
 
 SOURCES	= src/FingerprintExtractor.cpp \
 	  src/Filter.cpp \

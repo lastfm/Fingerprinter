@@ -44,30 +44,6 @@
 namespace fingerprint
 {
 
-#if DBG_OUTPUT_WAV
-   // (needed for the header)
-   typedef struct WavHeader_t {
-      unsigned int RIFF; // "RIFF"
-      unsigned int chunksize; // in bytes
-      unsigned int WAVE; // "WAVE"
-
-      unsigned int subchunk1id; // "fmt "
-      unsigned int subchunk1size; // 16 for pcm
-      unsigned short int audioformat; // PCM = 1 (no compression)
-      unsigned short int nchannels; // 1 or 2
-      unsigned int samplerate; // sample rate
-      unsigned int byterate; // = sameplerate * nchannels * bitespersample / 8
-      unsigned short int blockalign; // = nchannels * bitspersample / 8
-      unsigned short int bitspersample; // 8 or 16
-
-      unsigned int subchunk2id; // "data"
-      unsigned int subchunk2size; // = nsamples * nchannels * bitspersample / 8
-
-   } WavHeader;
-#endif
-
-
-
 using namespace std;
 static const int NUM_FRAMES_CLIENT = 32; // ~= 10 secs.
 
@@ -233,35 +209,6 @@ void FingerprintExtractor::initForQuery(int freq, int nchannels )
                static_cast<unsigned int>(QUERY_START_SECS * 1000), 
                MIN_UNIQUE_KEYS, 
                static_cast<unsigned int>(UPDATE_SIZE_SECS * 1000) );
-
-   ///////////////////////////////////////////////////////////////////////
-#if DBG_OUTPUT_WAV
-   samples.clear();
-   WavHeader wv;
-
-   wv.RIFF = 1179011410; // 'RIFF'
-   wv.chunksize = 39277758;
-   wv.WAVE = 1163280727;
-   wv.subchunk1id = 544501094;
-   wv.subchunk1size = 16;
-   wv.audioformat = 1;
-   wv.nchannels = 1;
-   //wv.nchannels = 2;
-   wv.samplerate = static_cast<unsigned int>(DFREQ);
-   //wv.samplerate = 48000;
-   //wv.samplerate = 44100;
-   wv.bitspersample = 16;
-   wv.byterate = wv.samplerate * wv.nchannels * wv.bitspersample/8 + 1; // sameplerate * nchannels * bitespersample / 8;
-   wv.blockalign = wv.nchannels * wv.bitspersample / 8; // = nchannels * bitspersample / 8
-   wv.subchunk2id = 1635017060;
-   wv.subchunk2size = 39277722;
-
-   testWAV.open( "TEST.wav", ios::binary);
-   if ( !testWAV.is_open() ) 
-      exit(1);
-   testWAV.write(reinterpret_cast<char*>(&wv), sizeof(WavHeader));
-#endif
-
 }
 
 // -----------------------------------------------------------------------------
@@ -403,11 +350,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
    if ( !pd.m_preBufferPassed )
    {
       // 1. downsample [norm + cb] frames to m_bufferSize - norm/2
-      //readData = pd.m_downsampler.downsample( pd.m_pDownsampledCurrIt, pd.m_pEndDownsampledBuf,
-      //                                        pSourcePCMIt, pSourcePCMIt_end );
-
-      //pd.m_pDownsampledCurrIt += readData.first;
-
       pd.m_floatInData.resize( (pSourcePCMIt_end - pSourcePCMIt) / pd.m_nchannels);
       src_short_to_float_and_mono_array( pSourcePCMIt, 
                                          &(pd.m_floatInData[0]), static_cast<int>(pSourcePCMIt_end - pSourcePCMIt), 
@@ -447,15 +389,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
       }
 
       pd.m_preBufferPassed = true;
-
-      ////////////////////////////////////////////////////////////////////////////
-      //// TESTING PREBUFFER
-      //// TEMP!
-      //for (; start != pd.m_pEndDownsampledBuf; ++start)
-      //{
-      //   short sample = *start * numeric_limits<short>::max();
-      //   testWAV.write(reinterpret_cast<const char *>(&sample), sizeof(short int));
-      //}
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -473,18 +406,7 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
          pd.m_pDownsampledCurrIt = pd.m_pDownsampledPCM + (pd.m_compensateBufferSize + (pd.m_normWindow.size() / 2));
       }
 
-      //// 2. read m_bufferSize frames to cb + norm/2
-      //readData = pd.m_downsampler.downsample( pd.m_pDownsampledCurrIt, pd.m_pEndDownsampledBuf,
-      //                                        pSourcePCMIt, pSourcePCMIt_end );
-
-      //pd.m_pDownsampledCurrIt += readData.first;
-      //if ( pd.m_pDownsampledCurrIt != pd.m_pEndDownsampledBuf && !end_of_stream )
-      //   return false; // NEED MORE DATA
-
-      //pSourcePCMIt += readData.second;
-
-      // ********************************************************************
-
+      // 2. read m_bufferSize frames to cb + norm/2
       pd.m_floatInData.resize( (pSourcePCMIt_end - pSourcePCMIt) / pd.m_nchannels);
 
       if ( pd.m_floatInData.empty() )
@@ -525,14 +447,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
          pd.m_normWindow.add(pd.m_pDownsampledPCM[window_pos] * pd.m_pDownsampledPCM[window_pos]);
       }
 
-#if DBG_OUTPUT_WAV
-      ////////////////////////////////////////////////////////////////////
-      const float shortMax = static_cast<float>( numeric_limits<short>::max() );
-      for (unsigned int i = 0; i < pd.m_downsampledProcessSize; ++i)
-         samples.push_back(static_cast<short int>(pd.m_pDownsampledPCM[i] * shortMax));
-      ////////////////////////////////////////////////////////////////////
-#endif
-
       // 4. fft/process/whatevs [0...m_bufferSize+cb]
       pd.m_processedKeys += processKeys(pd.m_groupWindow, pos, pd);
 
@@ -546,36 +460,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
          found_enough_unique_keys = 
             fingerprint::findSignificantGroups( itBeg, itEnd, offset_left, offset_right, pd.m_toProcessKeys,
                                                 pd.m_totalWindowKeys, pd.m_minUniqueKeys);
-
-#if DBG_OUTPUT_WAV
-         // cut the samples to simulate the moving of groups
-         // find the real offset
-         unsigned int wav_left = 0, wav_right = 0, wav_total = 0;
-
-         if (found_enough_unique_keys)
-         {
-            wav_left += offset_left;
-            wav_right += offset_right;
-         }
-
-         // find wav_total
-         for (deque<GroupData>::const_iterator it = pd.m_groupWindow.begin(); it != pd.m_groupWindow.end(); ++it)
-            wav_total += it->count;
-         // find wav_left
-         for (deque<GroupData>::const_iterator it = pd.m_groupWindow.begin(); it != itBeg; ++it)
-            wav_left += it->count;
-         // find wav_right
-         for (deque<GroupData>::const_iterator it = pd.m_groupWindow.begin(); it != itEnd; ++it)
-            wav_right += it->count;
-         vector<short int>::iterator witBeg = samples.begin() + static_cast<size_t>(samples.size() * static_cast<float>(wav_left) / static_cast<float>(wav_total) );
-         vector<short int>::iterator witEnd = samples.begin() + static_cast<size_t>(samples.size() * static_cast<float>(wav_right) / static_cast<float>(wav_total) );
-         copy(witBeg, witEnd, samples.begin());
-         samples.resize(witEnd - witBeg);
-
-         //// TEMP!
-         //for (vector<short int>::const_iterator it = samples.begin(); it != samples.end(); ++it)
-         //   testWAV.write(reinterpret_cast<const char *>(&*it), sizeof(short int));
-#endif
 
          // if we're happy with this set, snip the beginning and end of the grouped keys
          if (found_enough_unique_keys)
@@ -612,12 +496,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
    {
       throw std::runtime_error("not enough unique keys");
    }
-
-#if DBG_OUTPUT_WAV
-   // write what's left over
-   for (vector<short int>::const_iterator it = samples.begin(); it != samples.end(); ++it)
-      testWAV.write(reinterpret_cast<const char *>(&*it), sizeof(short int));
-#endif
 
    // copy to a vector so that they can be returned as contiguous data
    pd.m_groups.resize(pd.m_groupWindow.size());
