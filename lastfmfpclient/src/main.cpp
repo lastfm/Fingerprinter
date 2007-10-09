@@ -260,8 +260,7 @@ int main(int argc, char* argv[])
       HTTPClient client;
       string c = client.postRawObj( PUBLIC_SERVER_NAME, urlParams, 
                                     fpData.first, fpData.second, 
-                                    //HTTP_DATA_NAME, true );
-                                    HTTP_DATA_NAME, false );
+                                    HTTP_DATA_NAME, true );
       cout << c << flush;
    }
    catch (const std::exception& e)
