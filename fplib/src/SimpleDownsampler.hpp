@@ -138,7 +138,7 @@ SimpleDownsampler<T>::downsample_fixed( T* pDestPCM, size_t destSize,
       for (size_t i = 0; i < samples_to_use; ++i)
       {
          tmpSample = pSourcePCM[2*i]   +
-            pSourcePCM[2*i+1];
+                     pSourcePCM[2*i+1];
          //tmpSample /= 2;
 
          pDestPCM[i] = (static_cast<T>(tmpSample) / shortMaxAndDownSample);
