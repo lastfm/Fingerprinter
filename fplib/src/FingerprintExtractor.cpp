@@ -26,10 +26,10 @@
 
 #include <iostream>
 #include <limits>
-#include <cassert>
 #include <bitset>
 #include <deque>
 #include <vector>
+#include <stdexcept>
 
 #include <samplerate.h> // libsamplerate
 
@@ -58,13 +58,12 @@ public:
      m_normalizedWindowMs(static_cast<unsigned int>(NORMALIZATION_SKIP_SECS * 1000 * 2)),
      m_compensateBufferSize(FRAMESIZE-OVERLAPSAMPLES + Filter::KEYWIDTH * OVERLAPSAMPLES),
      m_downsampledProcessSize(NUM_FRAMES_CLIENT*FRAMESIZE),
-     m_pDownsampleState(NULL),
      // notice that the buffer has extra space on either side for the normalization window  
      m_fullDownsampledBufferSize( m_downsampledProcessSize + // the actual processed part
                                   m_compensateBufferSize +  // a compensation buffer for the fft
                                 ((m_normalizedWindowMs * DFREQ / 1000) / 2) ), // a compensation buffer for the normalization
      m_normWindow(m_normalizedWindowMs * DFREQ / 1000),
-     m_pFFT(NULL), m_initPassed(false)
+     m_pFFT(NULL), m_pDownsampleState(NULL), m_initPassed(false)
    {
       m_pFFT            = new OptFFT(m_downsampledProcessSize + m_compensateBufferSize);
       m_pDownsampledPCM = new float[m_fullDownsampledBufferSize];
