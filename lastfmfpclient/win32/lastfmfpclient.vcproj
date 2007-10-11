@@ -211,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\mbid_mp3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\MP3_Source.h"
 				>
 			</File>

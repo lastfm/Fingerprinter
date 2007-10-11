@@ -51,11 +51,10 @@ using namespace std;
 
 // DO NOT CHANGE THOSE!
 const int  FP_PROTOCOL_VERSION    = 1;
-//const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/";
-const char FP_SERVER_NAME[]       = "192.168.0.94:8080/fingerprint/";
-const char METADATA_SERVER_NAME[] = "http://wsdev.audioscrobbler.com/fingerprint/fp.php";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.1";
-const char HTTP_DATA_NAME[]       = "fpdata";
+const char FP_SERVER_NAME[]       = "www.last.fm/fingerprint/query/";
+const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.2";
+const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -289,7 +288,7 @@ int main(int argc, char* argv[])
       HTTPClient client;
       string c = client.postRawObj( FP_SERVER_NAME, urlParams, 
                                     fpData.first, fpData.second, 
-                                    HTTP_DATA_NAME, false );
+                                    HTTP_POST_DATA_NAME, false );
       int fpid;
       istringstream iss(c);
       iss >> fpid;
