@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 
       cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
       cout << "A minimal fingerprint client, public release." << endl;
-      cout << "Copyright (C) 2007 by Last.fm (MIR)" << endl << endl;
+      cout << "Copyright (C) 2007 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
       cout << "Usage: " << endl;
       cout << fileName << " yourMp3File.mp3" << endl;
       cout << "or" << endl;
