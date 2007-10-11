@@ -319,9 +319,7 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
    PimplData& pd = *m_pPimplData;
 
    if ( !pd.m_initPassed )
-   {
       throw std::runtime_error("Please call initForQuery() or initForFullSubmit() before process()!");
-   }
 
    const short* pSourcePCMIt = pPCM;
    const short* pSourcePCMIt_end = pPCM + size;
@@ -370,7 +368,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
       if ( pd.m_pDownsampledCurrIt != pd.m_pEndDownsampledBuf )
          return false; // NEED MORE DATA
 
-      //pSourcePCMIt += readData.second;
       pSourcePCMIt += pd.m_downsampleData.input_frames_used * pd.m_nchannels;
 
       size_t pos = pd.m_downsampledProcessSize;
@@ -489,12 +486,12 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
 
 
    if (pd.m_toProcessKeys != 0 && pd.m_processedKeys < pd.m_toProcessKeys)
-      throw std::runtime_error("Couldn't deliver the requested number of keys");
+      throw std::runtime_error("Couldn't deliver the requested number of keys (it's the file too short?)");
 
    if ((pd.m_toProcessKeys != 0 && !found_enough_unique_keys) || 
        (pd.m_toProcessKeys == 0 && !enoughUniqueGoodGroups(pd.m_groupWindow.begin(), pd.m_groupWindow.end(), pd.m_minUniqueKeys)))
    {
-      throw std::runtime_error("not enough unique keys");
+      throw std::runtime_error("Not enough unique keys (it's the file too short?)");
    }
 
    // copy to a vector so that they can be returned as contiguous data
@@ -725,11 +722,12 @@ void src_short_to_float_and_mono_array( const short *in, float *out, int srclen,
       break;
    case 2:
       {
+         // this can be optimized
          int j = 0;
          const double div = numeric_limits<short>::max() * nchannels;
          for ( int i = 0; i < srclen; i += 2, ++j )
          {
-            out[j] = static_cast<float>( (static_cast<int>(in[i]) + static_cast<int>(in[i+1])) / div );
+            out[j] = static_cast<float>( static_cast<double>(static_cast<int>(in[i]) + static_cast<int>(in[i+1])) / div );
          }
       }
       break;
