@@ -37,6 +37,7 @@
 // stl
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 
 using namespace std;
@@ -49,10 +50,12 @@ using namespace std;
 #endif
 
 // DO NOT CHANGE THOSE!
-const int  FP_PROTOCOL_VERSION  = 1;
-const char PUBLIC_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[] = "FP Beta 1.1";
-const char HTTP_DATA_NAME[]     = "fpdata";
+const int  FP_PROTOCOL_VERSION    = 1;
+//const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/";
+const char FP_SERVER_NAME[]       = "192.168.0.94:8080/fingerprint/";
+const char METADATA_SERVER_NAME[] = "http://wsdev.audioscrobbler.com/fingerprint/fp.php";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.1";
+const char HTTP_DATA_NAME[]       = "fpdata";
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -161,11 +164,28 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
 }
 
 // -----------------------------------------------------------------------------
+
+string fetchMetadata(int fpid, HTTPClient& client)
+{
+   string c;
+   // it's in there! let's get the metadata
+   ostringstream oss; 
+   oss << METADATA_SERVER_NAME << "?fid=" << fpid;
+   c = client.get(oss.str());
+
+   if ( c.empty() )
+      cout << "No metadata found (yet!).. :(" << endl;
+
+   return c;
+}
+
+#include "../../fplib/src/fp_helper_fun.h" // for GroupData
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 int main(int argc, char* argv[])
 {
- 
    if ( argc < 2 )
    {
       string fileName = string(argv[0]);
@@ -176,11 +196,19 @@ int main(int argc, char* argv[])
       cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
       cout << "A minimal fingerprint client, public release." << endl;
       cout << "Copyright (C) 2007 by Last.fm (MIR)" << endl << endl;
-      cout << "Usage: " << fileName << " yourMp3File.mp3" << endl;
+      cout << "Usage: " << endl;
+      cout << fileName << " yourMp3File.mp3" << endl;
+      cout << "or" << endl;
+      cout << fileName << " -nometadata yourMp3File.mp3" << endl;
+      cout << "(if no metadata is wanted)" << endl;
       exit(0);
    }
 
    const string mp3FileName = argv[1];
+
+   bool wantMetadata = true;
+   if ( argc == 3 && string(argv[2]) == "-nometadata" )
+      wantMetadata = false;
 
    {
       // check if it exists
@@ -210,7 +238,7 @@ int main(int argc, char* argv[])
    MP3_Source::getInfo(mp3FileName, duration, samplerate, bitrate, nchannels);
 
    urlParams["fpversion"]  = toString(FP_PROTOCOL_VERSION);
-   urlParams["duration"]   = toString(duration);
+   urlParams["duration"]   = toString(duration); // this is absolutely mandatory
    urlParams["username"]   = PUBLIC_CLIENT_NAME; // replace with username if possible
    urlParams["samplerate"] = toString(samplerate);
 
@@ -231,7 +259,8 @@ int main(int argc, char* argv[])
       mp3Source.skipSilence();
 
       //////////////////////////////////////////////////////////////////////////      
-      // that's not really necessary: it's just to speed up things
+      // that's not mandatory: it's just to speed up things. 
+      // IMPORTANT: DO NOT DO IT WHEN FingerprintExtractor HAS BEEN SET TO initForFullSubmit !!!
       mp3Source.skip( static_cast<int>(fextr.getToSkipMs()) );
       // send a null pointer, since that's data it's ignored anyway
       fextr.process( 0, static_cast<size_t>(samplerate * nchannels * (fextr.getToSkipMs() / 1000.0)) );
@@ -256,12 +285,36 @@ int main(int argc, char* argv[])
       // get the fingerprint data
       pair<const char*, size_t> fpData = fextr.getFingerprint();
 
-      // send the fingerprint data
+      // send the fingerprint data, and get the fingerprint ID
       HTTPClient client;
-      string c = client.postRawObj( PUBLIC_SERVER_NAME, urlParams, 
+      string c = client.postRawObj( FP_SERVER_NAME, urlParams, 
                                     fpData.first, fpData.second, 
-                                    HTTP_DATA_NAME, true );
-      cout << c << flush;
+                                    HTTP_DATA_NAME, false );
+      int fpid;
+      istringstream iss(c);
+      iss >> fpid;
+
+      if ( !wantMetadata && iss.fail() )
+         c = "-1 FAIL"; // let's keep it parseable: we had an error!
+      else if ( wantMetadata && !iss.fail() )
+      {
+         // if there was no error and it wants metadata
+         string state;
+         iss >> state;
+         if ( state == "FOUND" )
+            c = fetchMetadata(fpid, client);
+         else if ( state == "NEW" )
+         {
+            cout << "Was not found! Now added, thanks! :)" << endl;
+            c.clear();
+         }
+      }
+
+      // if iss.fail() this will display the error, otherwise it will display
+      // metadata or the id
+
+      cout << c;
+
    }
    catch (const std::exception& e)
    {
@@ -272,7 +325,7 @@ int main(int argc, char* argv[])
    // clean up!
    delete [] pPCMBuffer;
 
-   // bye bye! :)
+   // bye bye and thanks for all the fish!
    return 0;
 }
 

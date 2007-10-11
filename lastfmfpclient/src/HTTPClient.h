@@ -39,8 +39,7 @@ public:
 
    bool setCookie(const std::string& cookieFileName);
 
-   void fetchWebPage(const std::string& url, 
-                     std::string& thePage);
+   std::string get(const std::string& url);
 
    // i.e.
    // map<string, string> m;

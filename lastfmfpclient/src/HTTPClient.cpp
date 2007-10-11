@@ -46,7 +46,6 @@ HTTPClient::HTTPClient()
    // some servers don't like requests that are made without a user-agent
    // field, so we provide one
    curl_easy_setopt(m_pCurlHandle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
 }
 
 // -----------------------------------------------------------------------------
@@ -105,7 +104,6 @@ string HTTPClient::postRawObj( const std::string& url,
    {
       curl_formadd( &pFormpost, &pLast, 
                     CURLFORM_PTRNAME, dName.c_str(),
-                    //CURLFORM_PTRCONTENTS, pDataEnc, 
                     CURLFORM_PTRCONTENTS, pData, 
                     CURLFORM_CONTENTSLENGTH, dataSize,
                     CURLFORM_END);
@@ -176,25 +174,33 @@ string HTTPClient::postRawObj( const std::string& url,
       curl_formfree(pFormpost);
 
    curl_slist_free_all(pHeaderlist);
+   curl_easy_setopt(m_pCurlHandle, CURLOPT_HTTPHEADER, NULL); // reset
 
    return ret;
 }
 
 // -----------------------------------------------------------------------------
 
-void HTTPClient::fetchWebPage( const std::string& url,
-                               string& thePage )
+string HTTPClient::get( const std::string& url )
 {
 
    m_inBuffer.clear();
+   char pCurlErrorStr[CURL_ERROR_SIZE];
+   curl_easy_setopt(m_pCurlHandle, CURLOPT_ERRORBUFFER, pCurlErrorStr);
+
+   // it's an http get
+   curl_easy_setopt(m_pCurlHandle, CURLOPT_HTTPGET, 1);
+
    // specify URL to get
    curl_easy_setopt(m_pCurlHandle, CURLOPT_URL, url.c_str());
 
-   // get it!
-   curl_easy_perform(m_pCurlHandle);
+   string ret;
+   if ( curl_easy_perform(m_pCurlHandle) == 0 )
+      ret = string(m_inBuffer.begin(), m_inBuffer.end());
+   else
+      ret = "ERROR: " + string(pCurlErrorStr);
 
-   thePage = string(m_inBuffer.begin(), m_inBuffer.end());
-
+   return ret;
 }
 
 // -----------------------------------------------------------------------------
