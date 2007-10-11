@@ -203,12 +203,32 @@ int main(int argc, char* argv[])
       exit(0);
    }
 
-   const string mp3FileName = argv[1];
-
+   string mp3FileName;
    bool wantMetadata = true;
-   if ( argc == 3 && string(argv[2]) == "-nometadata" )
-      wantMetadata = false;
+   
+   if ( argc == 2 )
+      mp3FileName = argv[1];
+   else if ( argc == 3 )
+   {
+      if ( string(argv[1]) == "-nometadata" )
+      {
+         wantMetadata = false;
+         mp3FileName = argv[2];
+      }
+      else
+      {
+         cerr << "ERROR: Invalid option " << argv[1] << endl;
+         exit(1);
+      }
+   }
+   else
+   {
+      cerr << "ERROR: Invalid arguments" << endl;
+      exit(1);
+   }
 
+   //////////////////////////////////////////////////////////////////////////
+   
    {
       // check if it exists
       ifstream checkFile(mp3FileName.c_str(), ios::binary);
