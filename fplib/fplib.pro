@@ -11,9 +11,6 @@ SOURCES	= src/FingerprintExtractor.cpp \
 	  src/Filter.cpp \
 	  src/OptFFT.cpp
 
-CONFIG(release, release|debug) {
-   
 DEFINES   += NDEBUG
-}
 
 INCLUDEPATH = include src
