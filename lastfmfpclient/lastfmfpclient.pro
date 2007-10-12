@@ -1,5 +1,5 @@
 TEMPLATE	= app
-CONFIG		+= warn_on release
+CONFIG		= warn_on release
 HEADERS	= src/HTTPClient.h \
           src/mbid_mp3.h \
           src/MP3_Source.h \
