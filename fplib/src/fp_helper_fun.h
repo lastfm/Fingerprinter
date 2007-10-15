@@ -73,6 +73,14 @@ unsigned int getTotalKeys(
 
 // -----------------------------------------------------------------------------
 
+inline
+int getMinimumLengthSecs()
+{
+   return static_cast<int>(QUERY_START_SECS + QUERY_SIZE_SECS + 1.5 );
+}
+
+// -----------------------------------------------------------------------------
+
 template <typename GroupDataIt>
 void simpleSkip( 
    GroupDataIt& begIt, const GroupDataIt& endIt,
