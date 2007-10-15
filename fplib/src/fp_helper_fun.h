@@ -34,13 +34,15 @@ namespace fingerprint
 {
 
 // -----------------------------------------------------------------------------
-static const float QUERY_START_SECS = 20;
-static const float QUERY_SIZE_SECS = 14;
-static const float UPDATE_SIZE_SECS = 10;
-static const float NORMALIZATION_SKIP_SECS = 2.5;
-static const int   MIN_UNIQUE_KEYS = 75;
+
+static const size_t FINGERPRINT_LIB_VERSION = 1;
+static const float  QUERY_START_SECS = 20;
+static const float  QUERY_SIZE_SECS = 14;
+static const float  UPDATE_SIZE_SECS = 10;
+static const float  NORMALIZATION_SKIP_SECS = 2.5;
+static const int    MIN_UNIQUE_KEYS = 75;
 static const unsigned int MAX_GOOD_GROUP_SIZE = 200;
-static const int   SHA_SIZE = 32;
+static const int    SHA_SIZE = 32;
 
 /////////////////////////////////////////////////////
 // For FFT. DO NOT TOUCH THEM!
@@ -69,14 +71,6 @@ unsigned int getTotalKeys(
    int mSecs )
 {
    return static_cast<unsigned int>((static_cast<double>(mSecs) / (1000.0 * OVERLAPSAMPLES) ) * DFREQ ) + 1;
-}
-
-// -----------------------------------------------------------------------------
-
-inline
-int getMinimumLengthSecs()
-{
-   return static_cast<int>(QUERY_START_SECS + QUERY_SIZE_SECS + 1.5 );
 }
 
 // -----------------------------------------------------------------------------

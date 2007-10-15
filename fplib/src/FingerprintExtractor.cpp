@@ -200,6 +200,18 @@ size_t FingerprintExtractor::getToSkipMs()
 
 // -----------------------------------------------------------------------------
 
+size_t FingerprintExtractor::getMinimumDurationMs()
+{
+   return static_cast<size_t>( (QUERY_START_SECS + QUERY_SIZE_SECS + 1) * 1000  );
+}
+
+// -----------------------------------------------------------------------------
+
+size_t FingerprintExtractor::getVersion()
+{ return FINGERPRINT_LIB_VERSION; }
+
+// -----------------------------------------------------------------------------
+
 void FingerprintExtractor::initForQuery(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = false;

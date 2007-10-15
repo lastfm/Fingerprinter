@@ -64,6 +64,13 @@ public:
    // Remark: this is only for "advanced" users!
    size_t getToSkipMs();
 
+   // Return the minimum duration of the file (in ms)
+   // Any file with a length smaller than this value will be discarded
+   size_t getMinimumDurationMs();
+
+   // return the version of the fingerprint
+   size_t getVersion();
+
 private:
 
    PimplData* m_pPimplData;

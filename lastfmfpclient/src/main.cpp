@@ -50,7 +50,6 @@ using namespace std;
 #endif
 
 // DO NOT CHANGE THOSE!
-const int  FP_PROTOCOL_VERSION    = 1;
 const char FP_SERVER_NAME[]       = "www.last.fm/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
 const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.2";
@@ -61,7 +60,7 @@ const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // just turn it into a string. Similar to boost::lexical_cast
 template <typename T>
-string toString(const T& val)
+std::string toString(const T& val)
 {
    ostringstream oss;
    oss << val;
@@ -249,14 +248,13 @@ int main(int argc, char* argv[])
    }
 
    // this map holds the parameters that will be put into the URL
-   map<string, string> urlParams;
+   map<std::string, std::string> urlParams;
 
    getFileInfo(mp3FileName, urlParams);
 
    int duration, samplerate, bitrate, nchannels;
    MP3_Source::getInfo(mp3FileName, duration, samplerate, bitrate, nchannels);
 
-   urlParams["fpversion"]  = toString(FP_PROTOCOL_VERSION);
    urlParams["duration"]   = toString(duration); // this is absolutely mandatory
    urlParams["username"]   = PUBLIC_CLIENT_NAME; // replace with username if possible
    urlParams["samplerate"] = toString(samplerate);
@@ -265,6 +263,10 @@ int main(int argc, char* argv[])
    // IMPORTANT: FingerprintExtractor assumes the data starts from the beginning of the file!
    fingerprint::FingerprintExtractor fextr;
    fextr.initForQuery(samplerate, nchannels); // initialize for query
+
+   size_t version = fextr.getVersion();
+   // wow, that's odd.. If I god directly with getVersion I get a strange warning with VS2005.. :P
+   urlParams["fpversion"]  = toString( version ); 
 
    // that's for the mp3
    MP3_Source mp3Source;
