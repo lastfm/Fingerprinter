@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="fplib"
+	ProjectGUID="{7103566A-226D-4F52-A20E-AE7E8EFB5C01}"
+	RootNamespace="LastFmTools"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake fplib_qmake.pro&#x0D;&#x0A;nmake debug"
+				ReBuildCommandLine="qmake fplib_qmake.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake debug"
+				CleanCommandLine="nmake clean"
+				Output=""
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="qmake fplib_qmake.pro&#x0D;&#x0A;nmake release"
+				ReBuildCommandLine="qmake fplib_qmake.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake release"
+				CleanCommandLine="nmake clean"
+				Output=""
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Make files"
+			>
+			<File
+				RelativePath=".\fplib_qmake.pro"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Source Files"
+			>
+			<File
+				RelativePath=".\src\CircularArray.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Filter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Filter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FingerprintExtractor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\include\FingerprintExtractor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FloatingAverage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\fp_helper_fun.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OptFFT.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OptFFT.h"
+				>
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
