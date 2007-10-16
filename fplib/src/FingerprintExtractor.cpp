@@ -334,7 +334,7 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
       throw std::runtime_error("Please call initForQuery() or initForFullSubmit() before process()!");
 
    const short* pSourcePCMIt = pPCM;
-   const short* pSourcePCMIt_end = pPCM + size;
+   const short* pSourcePCMIt_end = pPCM + (size / sizeof(short));
 
    if ( !pd.m_skipPassed )
    {

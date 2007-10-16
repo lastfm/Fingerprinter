@@ -66,10 +66,10 @@ public:
 
    // Return the minimum duration of the file (in ms)
    // Any file with a length smaller than this value will be discarded
-   size_t getMinimumDurationMs();
+   static size_t getMinimumDurationMs();
 
    // return the version of the fingerprint
-   size_t getVersion();
+   static size_t getVersion();
 
 private:
 
