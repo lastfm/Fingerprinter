@@ -29,6 +29,6 @@ INCLUDEPATH += include \
                ../../../res/libsamplerate
                
 win32 {
-    QMAKE_LFLAGS += /NODEFAULTLIB
+    #QMAKE_LFLAGS += /NODEFAULTLIB
 }
                
