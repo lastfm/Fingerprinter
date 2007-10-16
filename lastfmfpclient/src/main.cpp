@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
 
          // Process to create the fingerprint. If process returns true
          // it means he's happy with what he has.
-         if ( fextr.process( pPCMBuffer, readData, readData != PCMBufSize ) )
+         if ( fextr.process( pPCMBuffer, readData, mp3Source.eof() ) )
             break;
       }
 

@@ -46,12 +46,11 @@ public:
    void initForFullSubmit(int freq, int nchannels);
 
    // return false if it needs more data, otherwise true
-   // input MUST BE PCM data (16bits).
-   // size % 16 == 0 gives the best performance
-   // IMPORTANT: Assuming the data starts at 7.5 seconds from the beginning!
-   //            (10 secs - half normalization window)
-   // when true is returned, just call getFingerprint to get the fingerprint
-   bool process(const short* pPCM, size_t size, bool end_of_stream = false);
+   // IMPORTANT: num_samples specify the size of the *short* array pPCM, that is
+   //            the number of samples that are in the buffer. This includes
+   //            the stereo samples, i.e.
+   //            [L][R][L][R][L][R][L][R] would be num_samples=8
+   bool process(const short* pPCM, size_t num_samples, bool end_of_stream = false);
 
    // returns pair<NULL, 0> if the data is not ready
    std::pair<const char*, size_t> getFingerprint();

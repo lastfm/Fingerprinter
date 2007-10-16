@@ -48,10 +48,18 @@ namespace fingerprint
 using namespace std;
 static const int NUM_FRAMES_CLIENT = 32; // ~= 10 secs.
 
+enum eProcessType
+{
+   PT_UNKNOWN,
+   PT_FOR_QUERY,
+   PT_FOR_FULLSUBMIT
+};
+
 //////////////////////////////////////////////////////////////////////////
 
 class PimplData
 {
+
 public:
 
    PimplData()
@@ -64,7 +72,7 @@ public:
                                   m_compensateBufferSize +  // a compensation buffer for the fft
                                 ((m_normalizedWindowMs * DFREQ / 1000) / 2) ), // a compensation buffer for the normalization
      m_normWindow(m_normalizedWindowMs * DFREQ / 1000),
-     m_pFFT(NULL), m_pDownsampleState(NULL), m_initPassed(false)
+     m_pFFT(NULL), m_pDownsampleState(NULL), m_processType(PT_UNKNOWN)
    {
       m_pFFT            = new OptFFT(m_downsampledProcessSize + m_compensateBufferSize);
       m_pDownsampledPCM = new float[m_fullDownsampledBufferSize];
@@ -119,7 +127,7 @@ public:
    bool                   m_groupsReady;
    bool                   m_preBufferPassed;
 
-   bool                   m_initPassed;
+   eProcessType           m_processType;
 
    size_t                 m_toSkipSize;
    size_t                 m_toSkipMs;
@@ -160,7 +168,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-void initCustom( PimplData& pd,
+void initCustom( PimplData& pd, eProcessType pType,
                  int freq, int nchannels,
                  unsigned int lengthMs, unsigned int skipMs,
                  int minUniqueKeys, unsigned int uniqueKeyWindowMs );
@@ -215,7 +223,7 @@ size_t FingerprintExtractor::getVersion()
 void FingerprintExtractor::initForQuery(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = false;
-   initCustom( *m_pPimplData,
+   initCustom( *m_pPimplData, PT_FOR_QUERY,
                freq, nchannels,
                static_cast<unsigned int>(QUERY_SIZE_SECS * 1000),
                static_cast<unsigned int>(QUERY_START_SECS * 1000), 
@@ -228,7 +236,7 @@ void FingerprintExtractor::initForQuery(int freq, int nchannels )
 void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = true;
-   initCustom( *m_pPimplData,
+   initCustom( *m_pPimplData, PT_FOR_FULLSUBMIT,
                freq, nchannels, 
                numeric_limits<unsigned int>::max(), 
                0, MIN_UNIQUE_KEYS, 0 );
@@ -236,7 +244,7 @@ void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
 
 // -----------------------------------------------------------------------------
 
-void initCustom( PimplData& pd,
+void initCustom( PimplData& pd, eProcessType pType,
                  int freq, int nchannels,
                  unsigned int lengthMs, 
                  unsigned int skipMs, 
@@ -261,14 +269,17 @@ void initCustom( PimplData& pd,
 
    //////////////////////////////////////////////////////////////////////////
    
-   if ( skipMs > pd.m_normalizedWindowMs/2 )
+   if ( pd.m_processType == PT_FOR_QUERY && skipMs > pd.m_normalizedWindowMs/2 )
    {
       pd.m_toSkipMs = skipMs - (pd.m_normalizedWindowMs/2);
       pd.m_toSkipSize = static_cast<size_t>( freq * nchannels * 
-                                          (pd.m_toSkipMs / 1000.0) ); // half the norm window in secs
+                                            (pd.m_toSkipMs / 1000.0) ); // half the norm window in secs
    }
    else
+   {
+      pd.m_toSkipMs = 0;
       pd.m_toSkipSize = 0; // half of the normalization window will be skipped in ANY case
+   }
 
    pd.m_skippedSoFar = 0;
    pd.m_groupsReady = false;
@@ -289,8 +300,7 @@ void initCustom( PimplData& pd,
 
    pd.m_groupWindow.clear();
    pd.m_processedKeys = 0;
-   pd.m_initPassed = true;
-
+   pd.m_processType = pType;
 }
 
 // -----------------------------------------------------------------------------
@@ -325,21 +335,24 @@ void initCustom( PimplData& pd,
 //
 // repeat until enough blocks processed and enough groups!
 //
-bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_stream )
+bool FingerprintExtractor::process( const short* pPCM, size_t num_samples, bool end_of_stream )
 {
+   if ( num_samples == 0 )
+      return false;
+
    // easier read
    PimplData& pd = *m_pPimplData;
 
-   if ( !pd.m_initPassed )
+   if ( pd.m_processType == PT_UNKNOWN )
       throw std::runtime_error("Please call initForQuery() or initForFullSubmit() before process()!");
 
    const short* pSourcePCMIt = pPCM;
-   const short* pSourcePCMIt_end = pPCM + (size / sizeof(short));
+   const short* pSourcePCMIt_end = pPCM + num_samples;
 
    if ( !pd.m_skipPassed )
    {
       // needs to skip data? (reminder: the query needs to skip QUERY_START_SECS (- half of the normalization window)
-      if ( pd.m_skippedSoFar + size > pd.m_toSkipSize )
+      if ( pd.m_skippedSoFar + num_samples > pd.m_toSkipSize )
       {
          pSourcePCMIt = pPCM + (pd.m_toSkipSize - pd.m_skippedSoFar);
          pd.m_skipPassed = true;
@@ -347,7 +360,7 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
       else
       {
          // need more data
-         pd.m_skippedSoFar += size;
+         pd.m_skippedSoFar += num_samples;
          return false;
       }
    }
@@ -511,7 +524,7 @@ bool FingerprintExtractor::process( const short* pPCM, size_t size, bool end_of_
    copy(pd.m_groupWindow.begin(), pd.m_groupWindow.end(), pd.m_groups.begin());
 
    pd.m_groupsReady = true;
-   pd.m_initPassed = false;
+   pd.m_processType = PT_UNKNOWN;
    return true;
 }
 
