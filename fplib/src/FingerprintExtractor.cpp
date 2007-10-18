@@ -168,7 +168,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-void initCustom( PimplData& pd, eProcessType pType,
+void initCustom( PimplData& pd,
                  int freq, int nchannels,
                  unsigned int lengthMs, unsigned int skipMs,
                  int minUniqueKeys, unsigned int uniqueKeyWindowMs );
@@ -223,7 +223,8 @@ size_t FingerprintExtractor::getVersion()
 void FingerprintExtractor::initForQuery(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = false;
-   initCustom( *m_pPimplData, PT_FOR_QUERY,
+   m_pPimplData->m_processType = PT_FOR_QUERY;
+   initCustom( *m_pPimplData,
                freq, nchannels,
                static_cast<unsigned int>(QUERY_SIZE_SECS * 1000),
                static_cast<unsigned int>(QUERY_START_SECS * 1000), 
@@ -236,7 +237,9 @@ void FingerprintExtractor::initForQuery(int freq, int nchannels )
 void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = true;
-   initCustom( *m_pPimplData, PT_FOR_FULLSUBMIT,
+   m_pPimplData->m_processType = PT_FOR_FULLSUBMIT;
+
+   initCustom( *m_pPimplData, 
                freq, nchannels, 
                numeric_limits<unsigned int>::max(), 
                0, MIN_UNIQUE_KEYS, 0 );
@@ -244,7 +247,7 @@ void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
 
 // -----------------------------------------------------------------------------
 
-void initCustom( PimplData& pd, eProcessType pType,
+void initCustom( PimplData& pd, 
                  int freq, int nchannels,
                  unsigned int lengthMs, 
                  unsigned int skipMs, 
@@ -268,7 +271,7 @@ void initCustom( PimplData& pd, eProcessType pType,
    // ***********************************************************************
 
    //////////////////////////////////////////////////////////////////////////
-   
+  
    if ( pd.m_processType == PT_FOR_QUERY && skipMs > pd.m_normalizedWindowMs/2 )
    {
       pd.m_toSkipMs = skipMs - (pd.m_normalizedWindowMs/2);
@@ -300,7 +303,6 @@ void initCustom( PimplData& pd, eProcessType pType,
 
    pd.m_groupWindow.clear();
    pd.m_processedKeys = 0;
-   pd.m_processType = pType;
 }
 
 // -----------------------------------------------------------------------------
