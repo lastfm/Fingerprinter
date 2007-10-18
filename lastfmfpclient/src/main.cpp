@@ -50,9 +50,9 @@ using namespace std;
 #endif
 
 // DO NOT CHANGE THOSE!
-const char FP_SERVER_NAME[]       = "www.last.fm/fingerprint/query/";
+const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.2";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.3";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -237,7 +237,7 @@ int main(int argc, char* argv[])
          exit(1);
       }
 
-      // checks if it is an mp3 (very unelegant)
+      // checks if it is an mp3 (very un-elegant)
       size_t filelen = mp3FileName.length();
       if ( filelen < 5 || mp3FileName.substr(filelen-4, 4) != ".mp3" )
       {
