@@ -177,8 +177,6 @@ string fetchMetadata(int fpid, HTTPClient& client)
    return c;
 }
 
-#include "../../fplib/src/fp_helper_fun.h" // for GroupData
-
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
