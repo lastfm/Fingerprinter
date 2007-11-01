@@ -49,7 +49,7 @@ public:
    virtual void skip(const int mSecs);
    virtual void skipSilence(double silenceThreshold = 0.0001);
 
-   bool  eof() const { return m_inputFile.eof(); }
+   bool  eof() const { return m_inputFile.eof() && m_pcmpos == 0; }
 
 private:
 

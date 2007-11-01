@@ -253,6 +253,15 @@ int main(int argc, char* argv[])
    int duration, samplerate, bitrate, nchannels;
    MP3_Source::getInfo(mp3FileName, duration, samplerate, bitrate, nchannels);
 
+   if ( static_cast<size_t>(duration * 1000) < fingerprint::FingerprintExtractor::getMinimumDurationMs() )
+   {
+      cerr << "ERROR: Song duration is " << duration 
+           << "s! Minimum required is: " 
+           << static_cast<int>( fingerprint::FingerprintExtractor::getMinimumDurationMs() / 1000 ) 
+           << "s" << endl;
+      exit(1);
+   }
+
    urlParams["duration"]   = toString(duration); // this is absolutely mandatory
    urlParams["username"]   = PUBLIC_CLIENT_NAME; // replace with username if possible
    urlParams["samplerate"] = toString(samplerate);
@@ -260,7 +269,7 @@ int main(int argc, char* argv[])
    // This will extract the fingerprint
    // IMPORTANT: FingerprintExtractor assumes the data starts from the beginning of the file!
    fingerprint::FingerprintExtractor fextr;
-   fextr.initForQuery(samplerate, nchannels); // initialize for query
+   fextr.initForQuery(samplerate, nchannels, duration); // initialize for query
 
    size_t version = fextr.getVersion();
    // wow, that's odd.. If I god directly with getVersion I get a strange warning with VS2005.. :P

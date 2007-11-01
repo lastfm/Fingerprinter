@@ -42,7 +42,9 @@ public:
    FingerprintExtractor(); // ctor
    ~FingerprintExtractor(); // dtor
 
-   void initForQuery(int freq, int nchannels);
+   // duration (in seconds!) is optional, but if you want to submit tracks <34 secs
+   // it must be provided. 
+   void initForQuery(int freq, int nchannels, int duration = -1);
    void initForFullSubmit(int freq, int nchannels);
 
    // return false if it needs more data, otherwise true

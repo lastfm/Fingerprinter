@@ -171,7 +171,7 @@ public:
 void initCustom( PimplData& pd,
                  int freq, int nchannels,
                  unsigned int lengthMs, unsigned int skipMs,
-                 int minUniqueKeys, unsigned int uniqueKeyWindowMs );
+                 int minUniqueKeys, unsigned int uniqueKeyWindowMs, int duration );
 
 inline float getRMS( const FloatingAverage<double>& signal );
 unsigned int processKeys( deque<GroupData>& groups, size_t size, PimplData& pd );
@@ -210,7 +210,7 @@ size_t FingerprintExtractor::getToSkipMs()
 
 size_t FingerprintExtractor::getMinimumDurationMs()
 {
-   return static_cast<size_t>( (QUERY_START_SECS + QUERY_SIZE_SECS + 1) * 1000  );
+   return static_cast<size_t>( (QUERY_SIZE_SECS + NORMALIZATION_SKIP_SECS * 2 + GUARD_SIZE_SECS) * 1000 );
 }
 
 // -----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ size_t FingerprintExtractor::getVersion()
 
 // -----------------------------------------------------------------------------
 
-void FingerprintExtractor::initForQuery(int freq, int nchannels )
+void FingerprintExtractor::initForQuery(int freq, int nchannels, int duration )
 {
    m_pPimplData->m_skipPassed = false;
    m_pPimplData->m_processType = PT_FOR_QUERY;
@@ -229,7 +229,7 @@ void FingerprintExtractor::initForQuery(int freq, int nchannels )
                static_cast<unsigned int>(QUERY_SIZE_SECS * 1000),
                static_cast<unsigned int>(QUERY_START_SECS * 1000), 
                MIN_UNIQUE_KEYS, 
-               static_cast<unsigned int>(UPDATE_SIZE_SECS * 1000) );
+               static_cast<unsigned int>(UPDATE_SIZE_SECS * 1000), duration );
 }
 
 // -----------------------------------------------------------------------------
@@ -242,7 +242,7 @@ void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
    initCustom( *m_pPimplData, 
                freq, nchannels, 
                numeric_limits<unsigned int>::max(), 
-               0, MIN_UNIQUE_KEYS, 0 );
+               0, MIN_UNIQUE_KEYS, 0, -1 );
 }
 
 // -----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ void initCustom( PimplData& pd,
                  unsigned int lengthMs, 
                  unsigned int skipMs, 
                  int minUniqueKeys, 
-                 unsigned int uniqueKeyWindowMs )
+                 unsigned int uniqueKeyWindowMs, int duration )
 {
 
    //////////////////////////////////////////////////////////////////////////
@@ -271,18 +271,34 @@ void initCustom( PimplData& pd,
    // ***********************************************************************
 
    //////////////////////////////////////////////////////////////////////////
-  
-   if ( pd.m_processType == PT_FOR_QUERY && skipMs > pd.m_normalizedWindowMs/2 )
+   if ( pd.m_processType == PT_FOR_FULLSUBMIT ) 
+      skipMs = 0; // make sure
+   else if ( duration > 0 )
    {
-      pd.m_toSkipMs = skipMs - (pd.m_normalizedWindowMs/2);
-      pd.m_toSkipSize = static_cast<size_t>( freq * nchannels * 
-                                            (pd.m_toSkipMs / 1000.0) ); // half the norm window in secs
+      // skip + size + right normalization window + FFT guard
+      // 
+      int stdDurationMs = static_cast<int>((QUERY_START_SECS + QUERY_SIZE_SECS + NORMALIZATION_SKIP_SECS + GUARD_SIZE_SECS) * 1000);
+      int actualDurationMs = duration * 1000;
+      // compute the actual skipMs depending on the duration
+      if ( actualDurationMs < stdDurationMs )
+         skipMs -= max( stdDurationMs - actualDurationMs, 0 );
    }
-   else
-   {
-      pd.m_toSkipMs = 0;
-      pd.m_toSkipSize = 0; // half of the normalization window will be skipped in ANY case
-   }
+
+   pd.m_toSkipMs = max( static_cast<int>(skipMs) - static_cast<int>((pd.m_normalizedWindowMs/2)), 0 );
+   pd.m_toSkipSize = static_cast<size_t>( freq * nchannels * 
+                                          (pd.m_toSkipMs / 1000.0) ); // half the norm window in secs;
+
+   //if ( pd.m_processType == PT_FOR_QUERY && skipMs > pd.m_normalizedWindowMs/2 )
+   //{
+   //   pd.m_toSkipMs = skipMs - (pd.m_normalizedWindowMs/2);
+   //   pd.m_toSkipSize = static_cast<size_t>( freq * nchannels * 
+   //                                         (pd.m_toSkipMs / 1000.0) ); // half the norm window in secs
+   //}
+   //else
+   //{
+   //   pd.m_toSkipMs = 0;
+   //   pd.m_toSkipSize = 0; // half of the normalization window will be skipped in ANY case
+   //}
 
    pd.m_skippedSoFar = 0;
    pd.m_groupsReady = false;
@@ -459,7 +475,6 @@ bool FingerprintExtractor::process( const short* pPCM, size_t num_samples, bool 
       pSourcePCMIt += pd.m_downsampleData.input_frames_used * pd.m_nchannels;
 
       // ********************************************************************
-
 
       // 3. normalize [cb..m_bufferSize+cb]
       size_t pos = static_cast<unsigned int>(pd.m_compensateBufferSize);

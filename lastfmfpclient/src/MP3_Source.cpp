@@ -501,7 +501,9 @@ int MP3_Source::updateBuffer(signed short* pBuffer, size_t bufferSize)
       if (nwrit == bufferSize) 
          return static_cast<int>(nwrit);
    }
+   // end of stream
 
+   m_pcmpos = 0;
    return static_cast<int>(nwrit);
 }
 

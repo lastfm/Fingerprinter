@@ -39,6 +39,8 @@ static const size_t FINGERPRINT_LIB_VERSION = 1;
 static const float  QUERY_START_SECS = 20;
 static const float  QUERY_SIZE_SECS = 14;
 static const float  UPDATE_SIZE_SECS = 10;
+//FFT needs also a buffer that depends on the input freq. 3 secs should be enough up to 48Khz 
+static const float  GUARD_SIZE_SECS = 3; 
 static const float  NORMALIZATION_SKIP_SECS = 2.5;
 static const int    MIN_UNIQUE_KEYS = 75;
 static const unsigned int MAX_GOOD_GROUP_SIZE = 200;
