@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cctype> // for tolower
 #include <map>
 
 using namespace std;
@@ -52,7 +53,7 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.31";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.32";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -239,8 +240,13 @@ int main(int argc, char* argv[])
       size_t filelen = mp3FileName.length();
       if ( filelen < 5 || mp3FileName.substr(filelen-4, 4) != ".mp3" )
       {
-         cerr << "Sorry, only MP3 files are currently supported. But other formats will follow soon!" << endl;
-         exit(1);
+         string ext = mp3FileName.substr(filelen-4, 4);
+         std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
+         if ( ext != ".mp3" )
+         {
+            cerr << "Sorry, only MP3 files are currently supported. But other formats will follow soon!" << endl;
+            exit(1);
+         }
       }
 
    }
