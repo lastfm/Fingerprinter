@@ -52,7 +52,7 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.3";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.31";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
