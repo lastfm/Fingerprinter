@@ -638,7 +638,6 @@ void computeBits( vector<unsigned int>& bits,
                   const vector<Filter>& f, 
                   float ** frames, unsigned int nframes ) 
 {
-
    unsigned int first_time = Filter::KEYWIDTH / 2 + 1;
    unsigned int last_time = nframes - Filter::KEYWIDTH / 2;
 
@@ -647,6 +646,7 @@ void computeBits( vector<unsigned int>& bits,
 
    const unsigned int fSize = static_cast<unsigned int>(f.size());
    std::bitset<32> bt;
+   double X = 0;
 
    for (unsigned int t2 = first_time; t2 <= last_time; ++t2) 
    {
@@ -667,80 +667,76 @@ void computeBits( vector<unsigned int>& bits,
          unsigned int b_1q = (b1 + b2) / 2; // one quarter band
          unsigned int b_3q = b_1q + (b3 - b1) / 2; // three quarter band
          
-         /*
-         printf("t1 %d  t2 %d  t3 %d  b1 %d  b2 %d  b3 %d\n",
-                t1, t2, t3, b1, b2, b3);
-         */
-         float X = 0;
+         X = 0;
          
          // we should check from t1 > 0, but in practice, this doesn't happen
          // we subtract 1 from everything because this came from matlab where indices start from 1
          switch (f[i].filter_type) {
          case 1: { // total energy
             if (b1 > 0)
-               X = frames[t3-1][b3-1] - frames[t3-1][b1-1]
-                 - frames[t1-1][b3-1] + frames[t1-1][b1-1];
+               X = static_cast<double>(frames[t3-1][b3-1]) - static_cast<double>(frames[t3-1][b1-1])
+                 - static_cast<double>(frames[t1-1][b3-1]) + static_cast<double>(frames[t1-1][b1-1]);
             else
-               X = frames[t3-1][b3-1] - frames[t1-1][b3-1];
+               X = static_cast<double>(frames[t3-1][b3-1]) - static_cast<double>(frames[t1-1][b3-1]);
             break;
          }
          case 2: { // energy difference over time
             if (b1 > 0)
-               X = frames[t1-1][b1-1] - 2*frames[t2-2][b1-1]
-                 + frames[t3-1][b1-1] - frames[t1-1][b3-1]
-                 + 2*frames[t2-2][b3-1] - frames[t3-1][b3-1];
+               X = static_cast<double>(frames[t1-1][b1-1]) - 2*static_cast<double>(frames[t2-2][b1-1])
+                 + static_cast<double>(frames[t3-1][b1-1]) - static_cast<double>(frames[t1-1][b3-1])
+                 + 2*static_cast<double>(frames[t2-2][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
             else
-               X = - frames[t1-1][b3-1] + 2*frames[t2-2][b3-1]
-                   - frames[t3-1][b3-1];
+               X = - static_cast<double>(frames[t1-1][b3-1]) + 2*static_cast<double>(frames[t2-2][b3-1])
+                   - static_cast<double>(frames[t3-1][b3-1]);
             break;
          
          }
          case 3: { // energy difference over bands
             if (b1 > 0)
-               X = frames[t1-1][b1-1] - frames[t3-1][b1-1]
-                 - 2*frames[t1-1][b2-1] + 2*frames[t3-1][b2-1]
-                 + frames[t1-1][b3-1] - frames[t3-1][b3-1];
+               X = static_cast<double>(frames[t1-1][b1-1]) - static_cast<double>(frames[t3-1][b1-1])
+                 - 2*static_cast<double>(frames[t1-1][b2-1]) + 2*static_cast<double>(frames[t3-1][b2-1])
+                 + static_cast<double>(frames[t1-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
             else
-               X = - 2*frames[t1-1][b2-1] + 2*frames[t3-1][b2-1]
-                   + frames[t1-1][b3-1] - frames[t3-1][b3-1];
+               X = - 2*static_cast<double>(frames[t1-1][b2-1]) + 2*static_cast<double>(frames[t3-1][b2-1])
+                   + static_cast<double>(frames[t1-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
             break;   
          }
          case 4: {
             // energy difference over time and bands
             if (b1 > 0)
-               X = frames[t1-1][b1-1] - 2*frames[t2-2][b1-1]
-                 + frames[t3-1][b1-1] - 2*frames[t1-1][b2-1]
-                 + 4*frames[t2-2][b2-1] - 2*frames[t3-1][b2-1]
-                 + frames[t1-1][b3-1] - 2*frames[t2-2][b3-1]
-                 + frames[t3-1][b3-1];
+               X = static_cast<double>(frames[t1-1][b1-1]) - 2*static_cast<double>(frames[t2-2][b1-1])
+                 + static_cast<double>(frames[t3-1][b1-1]) - 2*static_cast<double>(frames[t1-1][b2-1])
+                 + 4*static_cast<double>(frames[t2-2][b2-1]) - 2*static_cast<double>(frames[t3-1][b2-1])
+                 + static_cast<double>(frames[t1-1][b3-1]) - 2*static_cast<double>(frames[t2-2][b3-1])
+                 + static_cast<double>(frames[t3-1][b3-1]);
             else
-               X = - 2*frames[t1-1][b2-1] + 4*frames[t2-2][b2-1]
-                   - 2*frames[t3-1][b2-1] + frames[t1-1][b3-1]
-                   - 2*frames[t2-2][b3-1] + frames[t3-1][b3-1];
+               X = - 2*static_cast<double>(frames[t1-1][b2-1]) + 4*static_cast<double>(frames[t2-2][b2-1])
+                   - 2*static_cast<double>(frames[t3-1][b2-1]) + static_cast<double>(frames[t1-1][b3-1])
+                   - 2*static_cast<double>(frames[t2-2][b3-1]) + static_cast<double>(frames[t3-1][b3-1]);
             break;   
          }
          case 5: { // time peak
             if (b1 > 0)
-               X = - frames[t1-1][b1-1] + 2*frames[t_1q-1][b1-1]
-                   - 2*frames[t_3q-1][b1-1] + frames[t3-1][b1-1]
-                   + frames[t1-1][b3-1] - 2*frames[t_1q-1][b3-1]
-                   + 2*frames[t_3q-1][b3-1] - frames[t3-1][b3-1];
+               X = - static_cast<double>(frames[t1-1][b1-1]) + 2*static_cast<double>(frames[t_1q-1][b1-1])
+                   - 2*static_cast<double>(frames[t_3q-1][b1-1]) + static_cast<double>(frames[t3-1][b1-1])
+                   + static_cast<double>(frames[t1-1][b3-1]) - 2*static_cast<double>(frames[t_1q-1][b3-1])
+                   + 2*static_cast<double>(frames[t_3q-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
             else
-               X = frames[t1-1][b3-1] - 2*frames[t_1q-1][b3-1]
-                 + 2*frames[t_3q-1][b3-1] - frames[t3-1][b3-1];
+               X = static_cast<double>(frames[t1-1][b3-1]) - 2*static_cast<double>(frames[t_1q-1][b3-1])
+                 + 2*static_cast<double>(frames[t_3q-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
                   
             break;
          }
          case 6: { // band beak
             if (b1 > 0)
-               X = - frames[t1-1][b1-1] + frames[t3-1][b1-1]
-                   + 2*frames[t1-1][b_1q-1] - 2*frames[t3-1][b_1q-1]
-                   - 2*frames[t1-1][b_3q-1] + 2*frames[t3-1][b_3q-1]
-                   + frames[t1-1][b3-1] - frames[t3-1][b3-1];
+               X = - static_cast<double>(frames[t1-1][b1-1]) + static_cast<double>(frames[t3-1][b1-1])
+                   + 2*static_cast<double>(frames[t1-1][b_1q-1]) - 2*static_cast<double>(frames[t3-1][b_1q-1])
+                   - 2*static_cast<double>(frames[t1-1][b_3q-1]) + 2*static_cast<double>(frames[t3-1][b_3q-1])
+                   + static_cast<double>(frames[t1-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
             else
-               X = + 2*frames[t1-1][b_1q-1] - 2*frames[t3-1][b_1q-1]
-                   - 2*frames[t1-1][b_3q-1] + 2*frames[t3-1][b_3q-1]
-                   + frames[t1-1][b3-1] - frames[t3-1][b3-1];
+               X = + 2*static_cast<double>(frames[t1-1][b_1q-1]) - 2*static_cast<double>(frames[t3-1][b_1q-1])
+                   - 2*static_cast<double>(frames[t1-1][b_3q-1]) + 2*static_cast<double>(frames[t3-1][b_3q-1])
+                   + static_cast<double>(frames[t1-1][b3-1]) - static_cast<double>(frames[t3-1][b3-1]);
 
             break;
          }
