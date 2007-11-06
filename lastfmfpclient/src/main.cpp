@@ -39,6 +39,7 @@
 #include <fstream>
 #include <sstream>
 #include <cctype> // for tolower
+#include <algorithm>
 #include <map>
 
 using namespace std;
