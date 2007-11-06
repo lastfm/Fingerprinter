@@ -40,7 +40,6 @@
 #include <sstream>
 #include <cctype> // for tolower
 #include <algorithm>
-#include <functional>
 #include <map>
 
 using namespace std;
@@ -243,7 +242,8 @@ int main(int argc, char* argv[])
       if ( filelen < 5 || mp3FileName.substr(filelen-4, 4) != ".mp3" )
       {
          string ext = mp3FileName.substr(filelen-4, 4);
-         std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
+         // the weird casting on tolower is to please gcc on ambiguities
+         std::transform(ext.begin(), ext.end(), ext.begin(), (int(*)(int))std::tolower);
          if ( ext != ".mp3" )
          {
             cerr << "Sorry, only MP3 files are currently supported. But other formats will follow soon!" << endl;
