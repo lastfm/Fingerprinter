@@ -627,7 +627,11 @@ void integralImage(float** ppFrames, unsigned int nFrames)
    for (unsigned int y = 1; y < nFrames; y++) 
    {
       for (unsigned int x = 1; x < Filter::NBANDS; x++) 
-         ppFrames[y][x] += ppFrames[y-1][x] + ppFrames[y][x-1] - ppFrames[y-1][x-1];
+      {
+         ppFrames[y][x] += static_cast<float>( static_cast<double>(ppFrames[y-1][x]) + 
+                                               static_cast<double>(ppFrames[y][x-1]) - 
+                                               static_cast<double>(ppFrames[y-1][x-1]) );
+      }
    }
 }
 
