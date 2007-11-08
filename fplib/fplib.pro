@@ -1,34 +1,16 @@
 TEMPLATE	= lib
-CONFIG	   += warn_on staticlib
-CONFIG	   -= qt
-QT         -= core gui
-TARGET      = fplib
+CONFIG		= warn_on staticlib
+HEADERS	= include/FingerprintExtractor.h \
+	  src/CircularArray.h \
+	  src/Filter.h \
+	  src/FloatingAverage.h \
+	  src/fp_helper_fun.h \
+	  src/OptFFT.h
 
-include( ../../../definitions.pro.inc )
+SOURCES	= src/FingerprintExtractor.cpp \
+	  src/Filter.cpp \
+	  src/OptFFT.cpp
 
-DESTDIR     = $$BUILD_DIR
+DEFINES   += NDEBUG
 
-HEADERS	    = include/FingerprintExtractor.h \
-	          src/CircularArray.h \
-        	  src/Filter.h \
-	          src/FloatingAverage.h \
-	          src/fp_helper_fun.h \
-	          src/OptFFT.h
-
-SOURCES	    = src/FingerprintExtractor.cpp \
-	          src/Filter.cpp \
-	          src/OptFFT.cpp
-
-CONFIG(release, release|debug) {
-    DEFINES += NDEBUG
-}
-
-INCLUDEPATH += include \
-               src \
-               ../libs/fftw/src/api \
-               ../../../res/libsamplerate
-               
-win32 {
-    #QMAKE_LFLAGS += /NODEFAULTLIB
-}
-               
+INCLUDEPATH = include src
