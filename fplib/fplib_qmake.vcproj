@@ -24,8 +24,8 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake fplib.pro&#x0D;&#x0A;nmake debug"
-				ReBuildCommandLine="qmake fplib.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake debug"
+				BuildCommandLine="qmake pro_qmake/fplib.pro&#x0D;&#x0A;nmake debug"
+				ReBuildCommandLine="qmake pro_qmake/fplib.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake debug"
 				CleanCommandLine="nmake clean"
 				Output=""
 				PreprocessorDefinitions=""
@@ -45,8 +45,8 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="qmake fplib.pro&#x0D;&#x0A;nmake release"
-				ReBuildCommandLine="qmake fplib.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake release"
+				BuildCommandLine="qmake pro_qmake/fplib.pro&#x0D;&#x0A;nmake release"
+				ReBuildCommandLine="qmake pro_qmake/fplib.pro&#x0D;&#x0A;nmake clean&#x0D;&#x0A;nmake release"
 				CleanCommandLine="nmake clean"
 				Output=""
 				PreprocessorDefinitions=""
