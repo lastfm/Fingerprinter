@@ -1,3 +1,4 @@
+TARGET		= fplib
 TEMPLATE	= lib
 CONFIG		= warn_on staticlib
 HEADERS	= include/FingerprintExtractor.h \
