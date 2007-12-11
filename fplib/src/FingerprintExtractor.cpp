@@ -224,6 +224,10 @@ void FingerprintExtractor::initForQuery(int freq, int nchannels, int duration )
 {
    m_pPimplData->m_skipPassed = false;
    m_pPimplData->m_processType = PT_FOR_QUERY;
+
+   if ( !m_pPimplData )
+      throw std::runtime_error("Not enough RAM to allocate the fingerprinter!");
+
    initCustom( *m_pPimplData,
                freq, nchannels,
                static_cast<unsigned int>(QUERY_SIZE_SECS * 1000),
@@ -238,6 +242,9 @@ void FingerprintExtractor::initForFullSubmit(int freq, int nchannels )
 {
    m_pPimplData->m_skipPassed = true;
    m_pPimplData->m_processType = PT_FOR_FULLSUBMIT;
+
+   if ( !m_pPimplData )
+      throw std::runtime_error("Not enough RAM to allocate the fingerprinter!");
 
    initCustom( *m_pPimplData, 
                freq, nchannels, 
@@ -254,7 +261,6 @@ void initCustom( PimplData& pd,
                  int minUniqueKeys, 
                  unsigned int uniqueKeyWindowMs, int duration )
 {
-
    //////////////////////////////////////////////////////////////////////////
    pd.m_freq = freq;
    pd.m_nchannels = nchannels;
