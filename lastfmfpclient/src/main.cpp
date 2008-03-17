@@ -53,8 +53,8 @@ using namespace std;
 
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
-const char METADATA_SERVER_NAME[] = "fingerprints.last.fm/xml/";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.4";
+const char METADATA_SERVER_NAME[] = "http://fingerprints.last.fm/xml/";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.41";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
 
 // -----------------------------------------------------------------------------
 
-string fetchMetadata(int fpid, HTTPClient& client)
+string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
 {
    ostringstream fpss;
    fpss << fpid;
@@ -181,6 +181,9 @@ string fetchMetadata(int fpid, HTTPClient& client)
       oss << *rIt << '/';
 
    oss << fpidStr << ".xml";
+
+   if ( justURL )
+      return oss.str();
 
    string c;
    // it's in there! let's get the metadata
@@ -211,27 +214,33 @@ int main(int argc, char* argv[])
       cout << fileName << " yourMp3File.mp3" << endl;
       cout << "or" << endl;
       cout << fileName << " -nometadata yourMp3File.mp3" << endl;
-      cout << "(if no metadata is wanted)" << endl;
+      cout << "or" << endl;
+      cout << fileName << " -url yourMp3File.mp3" << endl;
+      cout << "(will output the url of the metadata)" << endl;
       exit(0);
    }
 
    string mp3FileName;
    bool wantMetadata = true;
+   bool justUrl = false;
    
+
    if ( argc == 2 )
       mp3FileName = argv[1];
    else if ( argc == 3 )
    {
-      if ( string(argv[1]) == "-nometadata" )
-      {
+      string argStr = argv[1];
+      if ( argStr == "-nometadata" )
          wantMetadata = false;
-         mp3FileName = argv[2];
-      }
+      else if ( argStr == "-url" )
+         justUrl = true;
       else
       {
          cerr << "ERROR: Invalid option " << argv[1] << endl;
          exit(1);
       }
+
+      mp3FileName = argv[2];
    }
    else
    {
@@ -351,7 +360,7 @@ int main(int argc, char* argv[])
          string state;
          iss >> state;
          if ( state == "FOUND" )
-            c = fetchMetadata(fpid, client);
+            c = fetchMetadata(fpid, client, justUrl);
          else if ( state == "NEW" )
          {
             cout << "Was not found! Now added, thanks! :)" << endl;
