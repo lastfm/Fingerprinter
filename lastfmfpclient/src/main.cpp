@@ -53,8 +53,8 @@ using namespace std;
 
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
-const char METADATA_SERVER_NAME[] = "ws.audioscrobbler.com/fingerprint/fp.php";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.34";
+const char METADATA_SERVER_NAME[] = "fingerprints.last.fm/xml/";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.4";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -167,10 +167,23 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
 
 string fetchMetadata(int fpid, HTTPClient& client)
 {
+   ostringstream fpss;
+   fpss << fpid;
+   string fpidStr = fpss.str();
+
+   ostringstream oss; 
+   oss << METADATA_SERVER_NAME;
+
+   string::reverse_iterator rIt;
+   const int maxLev = 4; // max 4 levels in the dir structure
+   int levCounter = 0;
+   for ( rIt = fpidStr.rbegin(); rIt != fpidStr.rend() && levCounter < maxLev; ++rIt, ++levCounter )
+      oss << *rIt << '/';
+
+   oss << fpidStr << ".xml";
+
    string c;
    // it's in there! let's get the metadata
-   ostringstream oss; 
-   oss << METADATA_SERVER_NAME << "?fid=" << fpid;
    c = client.get(oss.str());
 
    if ( c.empty() )
