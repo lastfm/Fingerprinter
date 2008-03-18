@@ -174,11 +174,11 @@ string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
    ostringstream oss; 
    oss << METADATA_SERVER_NAME;
 
-   string::reverse_iterator rIt;
-   const int maxLev = 4; // max 4 levels in the dir structure
-   int levCounter = 0;
-   for ( rIt = fpidStr.rbegin(); rIt != fpidStr.rend() && levCounter < maxLev; ++rIt, ++levCounter )
-      oss << *rIt << '/';
+   //string::reverse_iterator rIt;
+   //const int maxLev = 4; // max 4 levels in the dir structure
+   //int levCounter = 0;
+   //for ( rIt = fpidStr.rbegin(); rIt != fpidStr.rend() && levCounter < maxLev; ++rIt, ++levCounter )
+   //   oss << *rIt << '/';
 
    oss << fpidStr << ".xml";
 
