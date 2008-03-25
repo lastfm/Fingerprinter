@@ -31,7 +31,8 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include <memory.h> // for memcopy
+#include <sstream>
+#include <cstdlib> 
 
 using namespace std;
 // ----------------------------------------------------------------------
@@ -253,13 +254,25 @@ OptFFT::OptFFT(const size_t maxDataSize)
 
  	m_maxFrames = static_cast<int> ( (maxDataSize - FRAMESIZE) / OVERLAPSAMPLES + 1 );
 
-   m_pIn  = static_cast<float*>        ( fftwf_malloc(sizeof(float)         * (numSamplesPerFrame   * m_maxFrames) ) );
-   m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames) ) );
-
-   if ( !m_pIn || !m_pOut )
+   m_pIn  = static_cast<float*> ( fftwf_malloc(sizeof(float) * (numSamplesPerFrame * m_maxFrames) ) );
+   if ( !m_pIn )
    {
-      cerr << "ERROR: Cannot allocate RAM for FFT!" << endl;
-      exit(1);
+      ostringstream oss;
+      oss << "fftwf_malloc failed on m_pIn. Trying to allocate <" 
+          << sizeof(float) * (numSamplesPerFrame * m_maxFrames)
+          << "> bytes";
+      throw std::runtime_error(oss.str());
+   }
+
+   m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames) ) );
+   if ( !m_pOut )
+   {
+      ostringstream oss;
+      oss << "fftwf_malloc failed on m_pOut. Trying to allocate <" 
+          << sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames)
+          << "> bytes";
+
+      throw std::runtime_error(oss.str());
    }
 
 	// in destroyed when line executed
@@ -268,6 +281,9 @@ OptFFT::OptFFT(const size_t maxDataSize)
                                  m_pOut, &numSamplesPerFrameOut,
                                  1, numSamplesPerFrameOut,
                                  FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+
+   if ( !m_p )
+      throw std::runtime_error ("fftwf_plan_many_dft_r2c failed");
 
 	double base = exp( log( static_cast<double>(MAXFREQ) / static_cast<double>(MINFREQ) ) / 
                       static_cast<double>(Filter::NBANDS) 
@@ -278,8 +294,24 @@ OptFFT::OptFFT(const size_t maxDataSize)
       m_powTable[i] = static_cast<unsigned int>( (pow(base, static_cast<double>(i)) - 1.0) * MINCOEF );
 
    m_pFrames = new float*[m_maxFrames];
+
+   if ( !m_pFrames )
+   {
+      ostringstream oss;
+      oss << "Allocation failed on m_pFrames. Trying to allocate <" 
+         << sizeof(float*) * m_maxFrames
+         << "> bytes";
+
+      throw std::runtime_error(oss.str());
+   }
+
+
    for (int i = 0; i < m_maxFrames; ++i) 
+   {
       m_pFrames[i] = new float[Filter::NBANDS];
+      if ( !m_pFrames[i] )
+         throw std::runtime_error("Allocation failed on m_pFrames");
+   }
 
 }
 
