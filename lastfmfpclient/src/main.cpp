@@ -40,6 +40,7 @@
 #include <sstream>
 #include <cctype> // for tolower
 #include <algorithm>
+#include <exception>
 #include <map>
 
 using namespace std;
