@@ -54,7 +54,7 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "http://ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.44";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.45";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -187,10 +187,13 @@ string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
 
    string c;
    // it's in there! let's get the metadata
-   c = client.get(oss.str());
+
+   // try a couple of times max..
+   for (int i = 0; i < 2 && c.empty(); ++i )
+      c = client.get(oss.str());
 
    if ( c.empty() )
-      cout << "No metadata found (yet!).. :(" << endl;
+      cout << "The metadata server returned an empty page. Please try again later." << endl;
 
    return c;
 }
@@ -209,7 +212,7 @@ int main(int argc, char* argv[])
 
       cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
       cout << "A minimal fingerprint client, public release." << endl;
-      cout << "Copyright (C) 2007 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
+      cout << "Copyright (C) 2007-2008 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
       cout << "Usage: " << endl;
       cout << fileName << " yourMp3File.mp3" << endl;
       cout << "or" << endl;
