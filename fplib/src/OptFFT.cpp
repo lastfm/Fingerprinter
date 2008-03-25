@@ -33,6 +33,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib> 
+#include <stdexcept>
 
 using namespace std;
 // ----------------------------------------------------------------------
