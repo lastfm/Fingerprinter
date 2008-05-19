@@ -30,6 +30,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <cstdlib> 

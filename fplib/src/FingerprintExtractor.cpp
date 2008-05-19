@@ -31,6 +31,7 @@
 #include <vector>
 #include <stdexcept>
 #include <cmath>
+#include <cstring>
 
 #include <samplerate.h> // libsamplerate
 
