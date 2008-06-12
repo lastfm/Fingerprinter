@@ -26,7 +26,8 @@ CONFIG(release, release|debug) {
 INCLUDEPATH += ../include \
                ../src \
                ../../libs/fftw/src/api \
-               ../../../../res/libsamplerate
+               $$ROOT_DIR/res/libsamplerate \
+               $$ROOT_DIR/src/libs/libsamplerate/src
                
 win32 {
     #QMAKE_LFLAGS += /NODEFAULTLIB

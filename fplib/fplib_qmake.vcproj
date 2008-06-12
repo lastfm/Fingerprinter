@@ -65,6 +65,10 @@
 			Name="Make files"
 			>
 			<File
+				RelativePath=".\pro_qmake\fplib.pro"
+				>
+			</File>
+			<File
 				RelativePath=".\fplib.pro"
 				>
 			</File>
