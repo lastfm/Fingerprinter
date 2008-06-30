@@ -446,6 +446,7 @@ int MP3_Source::updateBuffer(signed short* pBuffer, size_t bufferSize)
       {
          if ( !fetchData( m_inputFile, m_pMP3_Buffer, m_MP3_BufferSize, m_mad_stream) )
          {
+            m_mad_synth.pcm.length = 0;
             break; // nothing else to read
          }
 
