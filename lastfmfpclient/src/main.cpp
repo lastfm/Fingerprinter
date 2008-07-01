@@ -106,7 +106,7 @@ void addEntry ( map<string, string>& urlParams, const string& key, const string&
 // -----------------------------------------------------------------------------
 
 // gather some data from the (mp3) file
-void getFileInfo( const string& fileName, map<string, string>& urlParams )
+void getFileInfo( const string& fileName, map<string, string>& urlParams, bool doTaglib = true )
 {
 
    //////////////////////////////////////////////////////////////////////////
@@ -132,33 +132,44 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams )
 
    urlParams["sha256"] = Sha256File::toHexString(sha256, SHA_SIZE);
 
+
+   if ( !doTaglib )
+      return;
+
    //////////////////////////////////////////////////////////////////////////
    // ID3
 
-   TagLib::MPEG::File f(fileName.c_str());
-   if( f.isValid() && f.tag() ) 
+   try
    {
-      TagLib::Tag* pTag = f.tag();
+      TagLib::MPEG::File f(fileName.c_str());
+      if( f.isValid() && f.tag() ) 
+      {
+         TagLib::Tag* pTag = f.tag();
 
-      // artist
-      addEntry( urlParams, "artist", string(pTag->artist().toCString()) );
+         // artist
+         addEntry( urlParams, "artist", string(pTag->artist().toCString()) );
 
-      // album
-      addEntry( urlParams, "album", string(pTag->album().toCString()) );
+         // album
+         addEntry( urlParams, "album", string(pTag->album().toCString()) );
 
-      // title
-      addEntry( urlParams, "track", string(pTag->title().toCString()) );
+         // title
+         addEntry( urlParams, "track", string(pTag->title().toCString()) );
 
-      // track num
-      if ( pTag->track() > 0 )
-         addEntry( urlParams, "tracknum", toString(pTag->track()) );
+         // track num
+         if ( pTag->track() > 0 )
+            addEntry( urlParams, "tracknum", toString(pTag->track()) );
 
-      // year
-      if ( pTag->year() > 0 )
-         addEntry( urlParams, "year", toString(pTag->year()) );
+         // year
+         if ( pTag->year() > 0 )
+            addEntry( urlParams, "year", toString(pTag->year()) );
 
-      // genre
-      addEntry( urlParams, "genre", string(pTag->genre().toCString()) );
+         // genre
+         addEntry( urlParams, "genre", string(pTag->genre().toCString()) );
+      }
+   }
+   catch (const std::exception& /*e*/)
+   {
+      cerr << "WARNING: Taglib could not extract any information!" << endl;
    }
 
 }
@@ -227,6 +238,7 @@ int main(int argc, char* argv[])
    bool wantMetadata = true;
    bool justUrl = false;
    
+   bool doTagLib = true;
 
    if ( argc == 2 )
       mp3FileName = argv[1];
@@ -237,6 +249,11 @@ int main(int argc, char* argv[])
          wantMetadata = false;
       else if ( argStr == "-url" )
          justUrl = true;
+      else if ( argStr == "-nometadatanotaglib" ) // hidden..
+      {
+         wantMetadata = false;
+         doTagLib = false;
+      }
       else
       {
          cerr << "ERROR: Invalid option " << argv[1] << endl;
@@ -281,7 +298,7 @@ int main(int argc, char* argv[])
    // this map holds the parameters that will be put into the URL
    map<std::string, std::string> urlParams;
 
-   getFileInfo(mp3FileName, urlParams);
+   getFileInfo(mp3FileName, urlParams, doTagLib);
 
    int duration, samplerate, bitrate, nchannels;
    MP3_Source::getInfo(mp3FileName, duration, samplerate, bitrate, nchannels);
