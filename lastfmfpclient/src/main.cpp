@@ -396,7 +396,7 @@ int main(int argc, char* argv[])
 
       // send the fingerprint data, and get the fingerprint ID
       HTTPClient client;
-      string c = client.postRawObj( FP_SERVER_NAME, urlParams, 
+      string c = client.postRawObj( serverName, urlParams, 
                                     fpData.first, fpData.second, 
                                     HTTP_POST_DATA_NAME, false );
       int fpid;
