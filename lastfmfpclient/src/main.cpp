@@ -223,14 +223,15 @@ int main(int argc, char* argv[])
 
       cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
       cout << "A minimal fingerprint client, public release." << endl;
-      cout << "Copyright (C) 2007-2008 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
+      cout << "Copyright (C) 2007-2009 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
       cout << "Usage: " << endl;
-      cout << fileName << " yourMp3File.mp3" << endl;
+      cout << fileName << " yourMp3File.mp3 [fplocation]" << endl;
       cout << "or" << endl;
-      cout << fileName << " -nometadata yourMp3File.mp3" << endl;
+      cout << fileName << " -nometadata yourMp3File.mp3 [fplocation]" << endl;
       cout << "or" << endl;
-      cout << fileName << " -url yourMp3File.mp3" << endl;
+      cout << fileName << " -url yourMp3File.mp3 [fplocation]" << endl;
       cout << "(will output the url of the metadata)" << endl;
+      cout << "fplocation specifies the location of the fingerprint service, it's optional" << endl;
       exit(0);
    }
 
@@ -240,10 +241,12 @@ int main(int argc, char* argv[])
    
    bool doTagLib = true;
 
-   if ( argc == 2 )
-      mp3FileName = argv[1];
-   else if ( argc == 3 )
+   string serverName = FP_SERVER_NAME;
+   
+   int nameArgc = 1; // default has no option
+   if ( argv[1][0] == '-' )
    {
+      // got option
       string argStr = argv[1];
       if ( argStr == "-nometadata" )
          wantMetadata = false;
@@ -260,13 +263,41 @@ int main(int argc, char* argv[])
          exit(1);
       }
 
-      mp3FileName = argv[2];
+      nameArgc = 2;
    }
-   else
-   {
-      cerr << "ERROR: Invalid arguments" << endl;
-      exit(1);
-   }
+
+   mp3FileName = argv[nameArgc];
+
+   if ( argc > nameArgc + 1 )
+      serverName = argv[nameArgc+1] + string("/fingerprint/query/");
+
+   //if ( argc == 2 )
+   //   mp3FileName = argv[1];
+   //else if ( argc >= 3 )
+   //{
+   //   string argStr = argv[1];
+   //   if ( argStr == "-nometadata" )
+   //      wantMetadata = false;
+   //   else if ( argStr == "-url" )
+   //      justUrl = true;
+   //   else if ( argStr == "-nometadatanotaglib" ) // hidden..
+   //   {
+   //      wantMetadata = false;
+   //      doTagLib = false;
+   //   }
+   //   else
+   //   {
+   //      cerr << "ERROR: Invalid option " << argv[1] << endl;
+   //      exit(1);
+   //   }
+
+   //   mp3FileName = argv[2];
+   //}
+   //else
+   //{
+   //   cerr << "ERROR: Invalid arguments" << endl;
+   //   exit(1);
+   //}
 
    //////////////////////////////////////////////////////////////////////////
    
