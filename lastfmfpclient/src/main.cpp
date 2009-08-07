@@ -231,7 +231,8 @@ int main(int argc, char* argv[])
       cout << "or" << endl;
       cout << fileName << " -url yourMp3File.mp3 [fplocation]" << endl;
       cout << "(will output the url of the metadata)" << endl;
-      cout << "fplocation specifies the location of the fingerprint service, it's optional" << endl;
+      cout << "fplocation specifies the location of the fingerprint service, it's optional\n"
+           << "Note: if you're pointing directly to fpproxy don't forget to put :8081!!" << endl;
       exit(0);
    }
 
