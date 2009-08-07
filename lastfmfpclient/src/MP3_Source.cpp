@@ -25,6 +25,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <cmath>
+#include <cstdlib>
 #include <climits>
 #include <cstring>
 
