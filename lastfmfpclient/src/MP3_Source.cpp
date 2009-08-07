@@ -382,14 +382,11 @@ void MP3_Source::skipSilence(double silenceThreshold /* = 0.0001 */)
       {
       case 1:
          for (size_t j = 0; j < madSynth.pcm.length; ++j)
-
-
-
-            sum += abs((double)f2s(madSynth.pcm.samples[0][j]));
+            sum += abs((int)f2s(madSynth.pcm.samples[0][j]));
          break;
       case 2:
          for (size_t j = 0; j < madSynth.pcm.length; ++j)
-            sum += abs((double)f2s(
+            sum += abs((int)f2s(
                      (madSynth.pcm.samples[0][j] >> 1)
                    + (madSynth.pcm.samples[1][j] >> 1)));
          break;
