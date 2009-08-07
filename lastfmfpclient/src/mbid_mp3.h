@@ -34,6 +34,7 @@
 #ifndef __MBID_MP3_H
 #define __MBID_MP3_H
 
+#include <cstring>
 #define MBID_BUFFER_SIZE 37
 
 // -----------------------------------------------------------------------------

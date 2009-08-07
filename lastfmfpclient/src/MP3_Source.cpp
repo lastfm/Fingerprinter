@@ -24,6 +24,9 @@
 #include <sstream>
 #include <cassert>
 #include <stdexcept>
+#include <cmath>
+#include <climits>
+#include <cstring>
 
 #include "MP3_Source.h"
 #undef max // was definded in mad
@@ -379,11 +382,14 @@ void MP3_Source::skipSilence(double silenceThreshold /* = 0.0001 */)
       {
       case 1:
          for (size_t j = 0; j < madSynth.pcm.length; ++j)
-            sum += abs(f2s(madSynth.pcm.samples[0][j]));
+
+
+
+            sum += abs((double)f2s(madSynth.pcm.samples[0][j]));
          break;
       case 2:
          for (size_t j = 0; j < madSynth.pcm.length; ++j)
-            sum += abs(f2s(
+            sum += abs((double)f2s(
                      (madSynth.pcm.samples[0][j] >> 1)
                    + (madSynth.pcm.samples[1][j] >> 1)));
          break;
