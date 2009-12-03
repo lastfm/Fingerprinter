@@ -147,13 +147,13 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
          TagLib::Tag* pTag = f.tag();
 
          // artist
-         addEntry( urlParams, "artist", string(pTag->artist().toCString()) );
+         addEntry( urlParams, "artist", string(pTag->artist().toCString(true)) );
 
          // album
-         addEntry( urlParams, "album", string(pTag->album().toCString()) );
+         addEntry( urlParams, "album", string(pTag->album().toCString(true)) );
 
          // title
-         addEntry( urlParams, "track", string(pTag->title().toCString()) );
+         addEntry( urlParams, "track", string(pTag->title().toCString(true)) );
 
          // track num
          if ( pTag->track() > 0 )
@@ -164,7 +164,7 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
             addEntry( urlParams, "year", toString(pTag->year()) );
 
          // genre
-         addEntry( urlParams, "genre", string(pTag->genre().toCString()) );
+         addEntry( urlParams, "genre", string(pTag->genre().toCString(true)) );
       }
    }
    catch (const std::exception& /*e*/)
