@@ -289,34 +289,6 @@ int main(int argc, char* argv[])
    if ( argc > nameArgc + 1 )
       serverName = argv[nameArgc+1] + string("/fingerprint/query/");
 
-   //if ( argc == 2 )
-   //   mp3FileName = argv[1];
-   //else if ( argc >= 3 )
-   //{
-   //   string argStr = argv[1];
-   //   if ( argStr == "-nometadata" )
-   //      wantMetadata = false;
-   //   else if ( argStr == "-url" )
-   //      justUrl = true;
-   //   else if ( argStr == "-nometadatanotaglib" ) // hidden..
-   //   {
-   //      wantMetadata = false;
-   //      doTagLib = false;
-   //   }
-   //   else
-   //   {
-   //      cerr << "ERROR: Invalid option " << argv[1] << endl;
-   //      exit(1);
-   //   }
-
-   //   mp3FileName = argv[2];
-   //}
-   //else
-   //{
-   //   cerr << "ERROR: Invalid arguments" << endl;
-   //   exit(1);
-   //}
-
    //////////////////////////////////////////////////////////////////////////
    
    {
