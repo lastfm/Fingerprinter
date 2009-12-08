@@ -2,7 +2,8 @@ PROJECT(fplib)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+# uncomment if you wanna see some verbose action
+#SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # binaries get installed here
 SET(CMAKE_INSTALL_PREFIX "/usr/")
