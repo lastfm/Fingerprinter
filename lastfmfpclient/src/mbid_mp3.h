@@ -55,7 +55,7 @@ int to_synch_safe(char bytes[]) {
 
 int to_integer(char bytes[]) {
    size_t size = 0;
-   int i;
+   size_t i;
    for (i=0; i < sizeof(bytes); i++) {
       size = size * 256 + ((int)bytes[i] & 0x000000FF);
    }
