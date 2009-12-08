@@ -19,7 +19,7 @@ ADD_EXECUTABLE( lastfmfpclient
                   src/Sha256.cpp
                   src/Sha256File.cpp )
 
-TARGET_LINK_LIBRARIES(fplib fftw3f mad tag curl samplerate)
+TARGET_LINK_LIBRARIES(lastfmfpclient fplib fftw3f mad tag curl samplerate)
 
 INSTALL(TARGETS lastfmfpclient
         RUNTIME DESTINATION bin
