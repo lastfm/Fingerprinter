@@ -71,6 +71,23 @@ std::string toString(const T& val)
 
 // -----------------------------------------------------------------------------
 
+bool plain_isspace(char c)
+{
+   if ( c == ' ' || 
+        c == '\t' ||
+        c == '\n' ||
+        c == '\r' )
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+
+// -----------------------------------------------------------------------------
+
 string simpleTrim( const string& str )
 {
    if ( str.empty() )
@@ -78,14 +95,14 @@ string simpleTrim( const string& str )
 
    // left trim
    string::const_iterator lIt = str.begin();
-   for ( ; isspace(*lIt) && lIt != str.end(); ++lIt );
+   for ( ; plain_isspace(*lIt) && lIt != str.end(); ++lIt );
    if ( lIt == str.end() )
       return str;
 
    string::const_iterator rIt = str.end();
    --rIt;
 
-   for ( ; isspace(*rIt) && rIt != str.begin(); --rIt );
+   for ( ; plain_isspace(*rIt) && rIt != str.begin(); --rIt );
    ++rIt;
    
    return string(lIt, rIt);
