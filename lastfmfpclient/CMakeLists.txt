@@ -9,7 +9,7 @@ PROJECT(lastfmfpclient)
 ADD_DEFINITIONS(-Wall -O2 -g -DNDEBUG)
 
 INCLUDE_DIRECTORIES(src /usr/local/include/taglib /usr/include/taglib)
-LINK_DIRECTORIES(../fplib/fplib)
+LINK_DIRECTORIES(../fplib)
 
 #list all source files here
 ADD_EXECUTABLE( lastfmfpclient
