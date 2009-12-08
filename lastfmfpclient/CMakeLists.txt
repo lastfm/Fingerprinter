@@ -9,6 +9,7 @@ PROJECT(lastfmfpclient)
 ADD_DEFINITIONS(-Wall -O2 -g -DNDEBUG)
 
 INCLUDE_DIRECTORIES(src /usr/local/include/taglib /usr/include/taglib)
+LINK_DIRECTORIES(../fplib/fplib)
 
 #list all source files here
 ADD_EXECUTABLE( lastfmfpclient
@@ -18,7 +19,7 @@ ADD_EXECUTABLE( lastfmfpclient
                   src/Sha256.cpp
                   src/Sha256File.cpp )
 
-TARGET_LINK_LIBRARIES(../fplib/fplib fftw3f mad tag curl samplerate)
+TARGET_LINK_LIBRARIES(fplib fftw3f mad tag curl samplerate)
 
 INSTALL(TARGETS lastfmfpclient
         RUNTIME DESTINATION bin
