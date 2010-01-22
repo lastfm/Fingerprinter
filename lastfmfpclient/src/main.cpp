@@ -245,10 +245,7 @@ int main(int argc, char* argv[])
            << fileName << " [options] yourMp3File.mp3\n"
            << "Available options:\n"
            << " -nometadata: will only return the id of the fingerprint\n"
-           << " -url: (will output the url of the metadata)\n"
-           << " -length <len>: override the length of the track (in seconds!)\n"
-           << " -fplocation <location>: specifies the location of the fingerprint service\n"
-           << "Note: if you're pointing directly to fpproxy don't forget to put :8081!!" << endl;
+           << " -url: (will output the url of the metadata)\n";
       exit(0);
    }
 
