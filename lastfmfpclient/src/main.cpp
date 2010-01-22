@@ -54,7 +54,7 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "http://ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.5";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.51";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
 // -----------------------------------------------------------------------------
@@ -238,17 +238,16 @@ int main(int argc, char* argv[])
       if ( lastSlash != string::npos )
          fileName = fileName.substr(lastSlash+1);      
 
-      cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")" << endl;
-      cout << "A minimal fingerprint client, public release." << endl;
-      cout << "Copyright (C) 2007-2009 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")" << endl << endl;
-      cout << "Usage: " << endl;
-      cout << fileName << " yourMp3File.mp3 [fplocation]" << endl;
-      cout << "or" << endl;
-      cout << fileName << " -nometadata yourMp3File.mp3 [fplocation]" << endl;
-      cout << "or" << endl;
-      cout << fileName << " -url yourMp3File.mp3 [fplocation]" << endl;
-      cout << "(will output the url of the metadata)" << endl;
-      cout << "fplocation specifies the location of the fingerprint service, it's optional\n"
+      cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")\n"
+           << "A minimal fingerprint client, public release.\n"
+           << "Copyright (C) 2007-2010 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")\n\n"
+           << "Usage:\n"
+           << fileName << " [options] yourMp3File.mp3\n"
+           << "Available options:\n"
+           << " -nometadata: will only return the id of the fingerprint\n"
+           << " -url: (will output the url of the metadata)\n"
+           << " -length <len>: override the length of the track (in seconds!)\n"
+           << " -fplocation <location>: specifies the location of the fingerprint service\n"
            << "Note: if you're pointing directly to fpproxy don't forget to put :8081!!" << endl;
       exit(0);
    }
@@ -258,36 +257,52 @@ int main(int argc, char* argv[])
    bool justUrl = false;
    
    bool doTagLib = true;
+   int forceDuration = 0;
 
    string serverName = FP_SERVER_NAME;
-   
-   int nameArgc = 1; // default has no option
-   if ( argv[1][0] == '-' )
+
+   // man, I am so used to boost::program_options that I suck at writing command line parsers now
+
+   for(int i = 1; i < argc; ++i )
    {
-      // got option
-      string argStr = argv[1];
-      if ( argStr == "-nometadata" )
+      if ( argv[i][0] != '-' )
+      {
+         mp3FileName = argv[i]; // assume it's the filename
+         continue;
+      }
+
+      string arg(argv[i]);
+
+      if ( arg == "-nometadata" )
          wantMetadata = false;
-      else if ( argStr == "-url" )
+      else if ( arg == "-url" )
          justUrl = true;
-      else if ( argStr == "-nometadatanotaglib" ) // hidden..
+      else if ( arg == "-fplocation" && (i+1) < argc )
+      {
+         ++i;
+         serverName = argv[i] + string("/fingerprint/query/");
+      }
+      else if ( arg == "-nometadatanotaglib" ) // hidden
       {
          wantMetadata = false;
          doTagLib = false;
       }
+      else if ( arg == "-length" && (i+1) < argc )
+      {
+         ++i;
+         forceDuration = atoi(argv[i]);
+         if ( forceDuration == 0 )
+         {
+            cout << "Invalid length parameter for --lenght <" << argv[i] << ">\n";
+            exit(1);
+         }
+      }
       else
       {
-         cerr << "ERROR: Invalid option " << argv[1] << endl;
+         cout << "Invalid option or parameter <" << argv[i] << ">\n";
          exit(1);
       }
-
-      nameArgc = 2;
    }
-
-   mp3FileName = argv[nameArgc];
-
-   if ( argc > nameArgc + 1 )
-      serverName = argv[nameArgc+1] + string("/fingerprint/query/");
 
    //////////////////////////////////////////////////////////////////////////
    
@@ -301,10 +316,10 @@ int main(int argc, char* argv[])
       }
 
       // checks if it is an mp3 (very un-elegant)
-      size_t filelen = mp3FileName.length();
-      if ( filelen < 5 || mp3FileName.substr(filelen-4, 4) != ".mp3" )
+      size_t filenamelen = mp3FileName.length();
+      if ( filenamelen < 5 || mp3FileName.substr(filenamelen-4, 4) != ".mp3" )
       {
-         string ext = mp3FileName.substr(filelen-4, 4);
+         string ext = mp3FileName.substr(filenamelen-4, 4);
          // the weird casting on tolower is to please gcc on ambiguities
          std::transform(ext.begin(), ext.end(), ext.begin(), (int(*)(int))std::tolower);
          if ( ext != ".mp3" )
@@ -313,7 +328,6 @@ int main(int argc, char* argv[])
             exit(1);
          }
       }
-
    }
 
    // this map holds the parameters that will be put into the URL
@@ -333,7 +347,12 @@ int main(int argc, char* argv[])
       exit(1);
    }
 
-   urlParams["duration"]   = toString(duration); // this is absolutely mandatory
+    // this is absolutely mandatory!
+   if ( forceDuration > 0 )
+      urlParams["duration"] = toString(forceDuration);
+   else
+      urlParams["duration"] = toString(duration); // this is absolutely mandatory
+
    urlParams["username"]   = PUBLIC_CLIENT_NAME; // replace with username if possible
    urlParams["samplerate"] = toString(samplerate);
 
