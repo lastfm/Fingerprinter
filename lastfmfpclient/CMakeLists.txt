@@ -11,6 +11,12 @@ ADD_DEFINITIONS(-Wall -O2 -g -DNDEBUG)
 INCLUDE_DIRECTORIES(src /usr/local/include/taglib /usr/include/taglib)
 LINK_DIRECTORIES(../fplib)
 
+IF(APPLE)
+INCLUDE_DIRECTORIES(/opt/local/include/)
+INCLUDE_DIRECTORIES(/opt/local/include/taglib)
+ENDIF(APPLE)
+
+
 #list all source files here
 ADD_EXECUTABLE( lastfmfpclient
                   src/main.cpp

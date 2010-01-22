@@ -13,6 +13,10 @@ ADD_DEFINITIONS(-Wall -O2 -DNDEBUG -g `getconf LFS_CFLAGS`)
 
 INCLUDE_DIRECTORIES(include src)
 
+IF(APPLE)
+INCLUDE_DIRECTORIES(/opt/local/include/)
+ENDIF(APPLE)
+
 ADD_LIBRARY(fplib STATIC
             src/Filter
             src/FingerprintExtractor

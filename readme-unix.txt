@@ -1,6 +1,6 @@
 In order to compile you will need the following libraries:
 
-libfftw, libtag, libmad, libcurl
+libfftw, libtag, libmad, libcurl, libsamplerate
 
 If you are on a debian-like system just do:
 
