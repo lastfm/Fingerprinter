@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
    string mp3FileName;
    bool wantMetadata = true;
    bool justUrl = false;
-   
+
    bool doTagLib = true;
    int forceDuration = 0;
 

@@ -14,6 +14,7 @@ LINK_DIRECTORIES(../fplib)
 IF(APPLE)
 INCLUDE_DIRECTORIES(/opt/local/include/)
 INCLUDE_DIRECTORIES(/opt/local/include/taglib)
+LINK_DIRECTORIES(/opt/local/lib)
 ENDIF(APPLE)
 
 
