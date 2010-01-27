@@ -24,4 +24,4 @@ ADD_LIBRARY(fplib STATIC
             )
             
 INSTALL(TARGETS fplib ARCHIVE DESTINATION lib)
-INSTALL(DIRECTORY include/fplib DESTINATION include PATTERN ".svn" EXCLUDE)
+#INSTALL(DIRECTORY include/fplib DESTINATION include PATTERN ".svn" EXCLUDE)
