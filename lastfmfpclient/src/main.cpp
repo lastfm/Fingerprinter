@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
          forceDuration = atoi(argv[i]);
          if ( forceDuration == 0 )
          {
-            cout << "Invalid length parameter for --lenght <" << argv[i] << ">\n";
+            cout << "Invalid length parameter for -lenght <" << argv[i] << ">\n";
             exit(1);
          }
       }
