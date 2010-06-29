@@ -1,4 +1,4 @@
-PROJECT(lastfmfp)
+PROJECT(liblastfmfp)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
