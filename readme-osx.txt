@@ -1,26 +1,1 @@
-In order to compile you will need the following libraries:
-
-Make sure you have the following packages using macport or fink:
-cmake, libfftw, libtag, libmad, libcurl, libsamplerate
-
-(you might also need to update the link and include directories in the CMakeList.txt files under the 'fplib' and 'lastfmfpclient' directories)
-
-you will also need cmake in order to create the Makefile:
-
-Now just run the command:
-> cmake .
-> make
-
-you'll find the binary in ./lastfmfpclient/
-or if you want it installed just run
-
-> make install
-
-Finally, if you want to distribute the app, you'll need to change the location of the dynamic linked libraries:
-
-This will display everything (except the system libs) you need:
-> otool -L lastfmfpclient
-
-Copy them into the local path, now you need to "fix" your binary to remove the path, for each of the libraries, i.e.
-
-install_name_tool -change /opt/local/lib/libfftw3f.3.dylib libfftw3f.3.dylib lastfmfpclient
+In order to compile you will need the following libraries:Make sure you have the following packages using macport or fink:cmake, libfftw, libtag, libmad, libcurl, libsamplerate(you might also need to update the link and include directories in the CMakeList.txt files under the 'fplib' and 'lastfmfpclient' directories)you will also need cmake in order to create the Makefile:Now just run the command:> cmake .> makeyou'll find the binary in ./lastfmfpclient/or if you want it installed just run> make installFinally, if you want to distribute the app, you'll need to change the location of the dynamic linked libraries:This will display everything (except the system libs) you need:> otool -L lastfmfpclientCopy them into the local path, now you need to "fix" your binary to remove the path, for each of the libraries, i.e.install_name_tool -change /opt/local/lib/libfftw3f.3.dylib libfftw3f.3.dylib lastfmfpclient
