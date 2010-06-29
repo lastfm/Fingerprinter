@@ -57,10 +57,11 @@ using namespace std;
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
 const char METADATA_SERVER_NAME[] = "http://ws.audioscrobbler.com/2.0/";
-//"http://ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.6";
+const char PUBLIC_CLIENT_NAME[]   = "fp client 1.6";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
 
+// if you want to use the last.fm fingerprint library in your app you'll need
+// your own key
 const char LASTFM_API_KEY[] = "2bfed60da64b96c16ea77adbf5fe1a82";
 
 // -----------------------------------------------------------------------------
@@ -193,30 +194,17 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
    {
       cerr << "WARNING: Taglib could not extract any information!" << endl;
    }
-
 }
 
 // -----------------------------------------------------------------------------
 
 string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
 {
-   //ostringstream fpss;
-   //fpss << fpid;
-   //string fpidStr = fpss.str();
-
    ostringstream oss; 
    oss << METADATA_SERVER_NAME
        << "?method=track.getfingerprintmetadata"
        << "&fingerprintid=" << fpid
        << "&api_key=" << LASTFM_API_KEY;
-
-   //string::reverse_iterator rIt;
-   //const int maxLev = 4; // max 4 levels in the dir structure
-   //int levCounter = 0;
-   //for ( rIt = fpidStr.rbegin(); rIt != fpidStr.rend() && levCounter < maxLev; ++rIt, ++levCounter )
-   //   oss << *rIt << '/';
-
-   //oss << fpidStr << ".xml";
 
    if ( justURL )
       return oss.str();
@@ -352,7 +340,8 @@ int main(int argc, char* argv[])
       exit(1);
    }
 
-    // this is absolutely mandatory!
+   // WARNING!!! This is absolutely mandatory!
+   // If you don't specify the right duration you will not get the correct result!
    if ( forceDuration > 0 )
       urlParams["duration"] = toString(forceDuration);
    else
