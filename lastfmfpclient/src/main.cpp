@@ -53,9 +53,12 @@ using namespace std;
 
 // DO NOT CHANGE THOSE!
 const char FP_SERVER_NAME[]       = "ws.audioscrobbler.com/fingerprint/query/";
-const char METADATA_SERVER_NAME[] = "http://ws.audioscrobbler.com/fingerprint/";
-const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.51";
+const char METADATA_SERVER_NAME[] = "http://ws.audioscrobbler.com/2.0/";
+//"http://ws.audioscrobbler.com/fingerprint/";
+const char PUBLIC_CLIENT_NAME[]   = "FP Beta 1.6";
 const char HTTP_POST_DATA_NAME[]  = "fpdata";
+
+const char LASTFM_API_KEY[] = "2bfed60da64b96c16ea77adbf5fe1a82";
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -149,7 +152,6 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
 
    urlParams["sha256"] = Sha256File::toHexString(sha256, SHA_SIZE);
 
-
    if ( !doTaglib )
       return;
 
@@ -195,12 +197,15 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
 
 string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
 {
-   ostringstream fpss;
-   fpss << fpid;
-   string fpidStr = fpss.str();
+   //ostringstream fpss;
+   //fpss << fpid;
+   //string fpidStr = fpss.str();
 
    ostringstream oss; 
-   oss << METADATA_SERVER_NAME;
+   oss << METADATA_SERVER_NAME
+       << "?method=track.getfingerprintmetadata"
+       << "&fingerprintid=" << fpid
+       << "&api_key=" << LASTFM_API_KEY;
 
    //string::reverse_iterator rIt;
    //const int maxLev = 4; // max 4 levels in the dir structure
@@ -208,7 +213,7 @@ string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
    //for ( rIt = fpidStr.rbegin(); rIt != fpidStr.rend() && levCounter < maxLev; ++rIt, ++levCounter )
    //   oss << *rIt << '/';
 
-   oss << fpidStr << ".xml";
+   //oss << fpidStr << ".xml";
 
    if ( justURL )
       return oss.str();
