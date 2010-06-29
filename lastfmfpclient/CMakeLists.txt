@@ -26,8 +26,20 @@ ADD_EXECUTABLE( lastfmfpclient
                   src/Sha256.cpp
                   src/Sha256File.cpp )
 
-TARGET_LINK_LIBRARIES(lastfmfpclient fplib fftw3f mad tag curl samplerate)
+TARGET_LINK_LIBRARIES(lastfmfpclient liblastfmfp fftw3f mad tag curl samplerate)
 
 INSTALL(TARGETS lastfmfpclient
         RUNTIME DESTINATION bin
         COMPONENT lastfmfpclient)
+
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
+SET(CPACK_SET_DESTDIR TRUE)
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "norman")
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "6")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
+SET( CPACK_DEBIAN_PACKAGE_DEPENDS "liblastfmfp,libtag1c2a,libtagc0,libcurl3,libmad0,libfftw3-3,libsamplerate0" )
+
+INCLUDE(CPack)
