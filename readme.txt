@@ -22,7 +22,7 @@ lastfmfpclient requires the following libraries:
 To compile both fplib and lastfmfpclient just run (you'll need cmake):
    $ cmake .
    $ make
-   $ make install
+   $ sudo make install
 
 Running
 -------
@@ -47,7 +47,7 @@ c. You don't have to decode the whole thing as the library can get as many bytes
 
       for (;;)
       {
-         // read some data from the mp3
+         // read some data from the file
          size_t sz = read_some_source( pPCMBuffer );
          if ( sz == 0 )
          {
@@ -64,10 +64,10 @@ c. You don't have to decode the whole thing as the library can get as many bytes
       // get the fingerprint data
       pair<const char*, size_t> fpData = fextr.getFingerprint();
  
-d. fpData is what you'll need to send to the HTTP fingerprint service along with (also VERY important) the lenght of the track in seconds.
+d. fpData is what you'll need to send to the HTTP fingerprint service along with (also VERY important) the length of the track in seconds.
 e. Other stuff to send is nice to have (artist and track names, genre, username, etc..) but not mandatory (but if you abuse us, we'll get you)
 
-The protocol used to talk to the HTTP fingerprint service is just a POST with the fingerprint binary as object, and the other things (lenght, metadata, etc..) as parameters. See lastfmfpclient for an example.
+The protocol used to talk to the HTTP fingerprint service is just a POST with the fingerprint binary as object, and the other things (length, metadata, etc..) as parameters. See lastfmfpclient for an example.
 
 Using the metadata API
 ======================
