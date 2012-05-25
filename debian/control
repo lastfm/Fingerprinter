@@ -1,0 +1,24 @@
+Source: lastfm-libfplib
+Section: unknown
+Priority: extra
+Maintainer: Ricky Cormier <ricky@last.fm>
+Build-Depends: debhelper (>=7), cmake, fftw3-dev, libtag1c2a, libtagc0-dev,
+                                libmad0-dev, libsamplerate0-dev,
+                                libcurl3, libcurl3-dev, libcurl4-openssl-dev
+Standards-Version: 3.7.3
+
+Package: lastfm-libfplib
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Last FM fingerprint library runtime
+
+Package: lastfm-libfplib-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Last FM fingerprint library development package
+
+Package: lastfm-fpclient
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Last FM fingerprint library example client
+

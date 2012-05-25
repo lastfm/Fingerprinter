@@ -1,0 +1,5 @@
+lastfm-libfplib (1.6.1) stable; urgency=low
+
+  * Initial packaging (using debian packaging system)
+
+ -- Ricky Cormier <ricky@last.fm>  Wed, 23 May 2012 15:17:49 +0000
