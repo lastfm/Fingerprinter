@@ -31,14 +31,13 @@
 #include <cmath>
 #include <cstring>
 
-#include <samplerate.h> // libsamplerate
+#include <samplerate.h>
 
 #include <fplib/FingerprintExtractor.h>
-
-#include "fp_helper_fun.h" // for GroupData
-#include "Filter.h"
-#include "FloatingAverage.h"
-#include "OptFFT.h"
+#include <fplib/fp_helper_fun.h>
+#include <fplib/Filter.h>
+#include <fplib/FloatingAverage.h>
+#include <fplib/OptFFT.h>
 
 //////////////////////////////////////////////////////////////////////////
 

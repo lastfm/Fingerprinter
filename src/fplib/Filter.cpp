@@ -26,8 +26,8 @@
 #include <algorithm> // for max
 #include <vector>
 
-#include "Filter.h"
-#include "fp_helper_fun.h"
+#include <fplib/Filter.h>
+#include <fplib/fp_helper_fun.h>
 
 using namespace std;
 

@@ -1,39 +1,39 @@
 /***************************************************************************
-* This file is part of last.fm fingerprint app                             *
-*  Last.fm Ltd <mir@last.fm>                                               *
-*                                                                          *
-* The last.fm fingerprint app is free software: you can redistribute it    *
-* and/or modify it under the terms of the GNU General Public License as    *
-* published by the Free Software Foundation, either version 3 of the       *
-* License, or (at your option) any later version.                          *
-*                                                                          *
-* The last.fm fingerprint app and library are distributed in the hope that *
-* it will be useful, but WITHOUT ANY WARRANTY; without even the implied    *
-* warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See    *
-* the GNU General Public License for more details.                         *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with The last.fm fingerprint.                                      *
-* If not, see <http://www.gnu.org/licenses/>.                              *
-*                                                                          *
-* Part of this code is based on the work of Y. Ke, D. Hoiem, and           *
-* R. Sukthankar - "Computer Vision for Music Identification",              *
-* in Proceedings of Computer Vision and Pattern Recognition, 2005.         *
-* See also http://www.cs.cmu.edu/~yke/musicretrieval/                      *
-***************************************************************************/
-
-#include "OptFFT.h"
-#include "fp_helper_fun.h"
-#include "Filter.h" // for NBANDS
+ * This file is part of last.fm fingerprint app                             *
+ *  Last.fm Ltd <mir@last.fm>                                               *
+ *                                                                          *
+ * The last.fm fingerprint app is free software: you can redistribute it    *
+ * and/or modify it under the terms of the GNU General Public License as    *
+ * published by the Free Software Foundation, either version 3 of the       *
+ * License, or (at your option) any later version.                          *
+ *                                                                          *
+ * The last.fm fingerprint app and library are distributed in the hope that *
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied    *
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See    *
+ * the GNU General Public License for more details.                         *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with The last.fm fingerprint.                                      *
+ * If not, see <http://www.gnu.org/licenses/>.                              *
+ *                                                                          *
+ * Part of this code is based on the work of Y. Ke, D. Hoiem, and           *
+ * R. Sukthankar - "Computer Vision for Music Identification",              *
+ * in Proceedings of Computer Vision and Pattern Recognition, 2005.         *
+ * See also http://www.cs.cmu.edu/~yke/musicretrieval/                      *
+ ***************************************************************************/
 
 #include <cmath>
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
-#include <cstdlib> 
+#include <cstdlib>
 #include <stdexcept>
 #include <cstring>
+
+#include <fplib/OptFFT.h>
+#include <fplib/fp_helper_fun.h>
+#include <fplib/Filter.h>
 
 using namespace std;
 // ----------------------------------------------------------------------
@@ -230,187 +230,187 @@ namespace fingerprint
       0.000339f,0.000285f,0.000236f,0.000191f,0.000151f,0.000115f,0.000085f,0.000059f,0.000038f,0.000021f,0.000009f,
       0.000002f,0.000000f };
 
-// -----------------------------------------------------------------------------
+   // -----------------------------------------------------------------------------
 
-OptFFT::OptFFT(const size_t maxDataSize)
-{
-   assert( maxDataSize % OVERLAPSAMPLES == 0 );
-
-   // DOUBLE
-   //m_pIn = static_cast<double*>( fftw_malloc(sizeof(double) * FRAMESIZE) );
-   //m_pOut = static_cast<fftw_complex*>( fftw_malloc(sizeof(fftw_complex) * (FRAMESIZE/2 + 1)) );
-	//m_p = fftw_plan_dft_r2c_1f(FRAMESIZE, m_pIn, m_pOut, FFTW_ESTIMATE); // FFTW_ESTIMATE or FFTW_MEASURE
-
-   // FLOAT
- //  m_pIn = static_cast<float*>( fftwf_malloc(sizeof(float) * FRAMESIZE) );
- //  m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (FRAMESIZE/2 + 1)) );
-
-	//// in destroyed when line executed
-	//m_p = fftwf_plan_dft_r2c_1d(FRAMESIZE, m_pIn, m_pOut, FFTW_ESTIMATE); // FFTW_ESTIMATE or FFTW_MEASURE
-
-   //-----------------------------------------------------------------
-
-   int numSamplesPerFrame    = FRAMESIZE;
-   int numSamplesPerFrameOut = FRAMESIZE/2+1;
-
- 	m_maxFrames = static_cast<int> ( (maxDataSize - FRAMESIZE) / OVERLAPSAMPLES + 1 );
-
-   m_pIn  = static_cast<float*> ( fftwf_malloc(sizeof(float) * (numSamplesPerFrame * m_maxFrames) ) );
-   if ( !m_pIn )
+   OptFFT::OptFFT(const size_t maxDataSize)
    {
-      ostringstream oss;
-      oss << "fftwf_malloc failed on m_pIn. Trying to allocate <" 
-          << sizeof(float) * (numSamplesPerFrame * m_maxFrames)
-          << "> bytes";
-      throw std::runtime_error(oss.str());
-   }
+      assert( maxDataSize % OVERLAPSAMPLES == 0 );
 
-   m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames) ) );
-   if ( !m_pOut )
-   {
-      ostringstream oss;
-      oss << "fftwf_malloc failed on m_pOut. Trying to allocate <" 
-          << sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames)
-          << "> bytes";
+      // DOUBLE
+      //m_pIn = static_cast<double*>( fftw_malloc(sizeof(double) * FRAMESIZE) );
+      //m_pOut = static_cast<fftw_complex*>( fftw_malloc(sizeof(fftw_complex) * (FRAMESIZE/2 + 1)) );
+      //m_p = fftw_plan_dft_r2c_1f(FRAMESIZE, m_pIn, m_pOut, FFTW_ESTIMATE); // FFTW_ESTIMATE or FFTW_MEASURE
 
-      throw std::runtime_error(oss.str());
-   }
+      // FLOAT
+      //  m_pIn = static_cast<float*>( fftwf_malloc(sizeof(float) * FRAMESIZE) );
+      //  m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (FRAMESIZE/2 + 1)) );
 
-	// in destroyed when line executed
-   m_p = fftwf_plan_many_dft_r2c(1, &numSamplesPerFrame, m_maxFrames,
-                                 m_pIn, &numSamplesPerFrame, 1, numSamplesPerFrame,
-                                 m_pOut, &numSamplesPerFrameOut,
-                                 1, numSamplesPerFrameOut,
-                                 FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+      //// in destroyed when line executed
+      //m_p = fftwf_plan_dft_r2c_1d(FRAMESIZE, m_pIn, m_pOut, FFTW_ESTIMATE); // FFTW_ESTIMATE or FFTW_MEASURE
 
-   if ( !m_p )
-      throw std::runtime_error ("fftwf_plan_many_dft_r2c failed");
+      //-----------------------------------------------------------------
 
-	double base = exp( log( static_cast<double>(MAXFREQ) / static_cast<double>(MINFREQ) ) / 
-                      static_cast<double>(Filter::NBANDS) 
-                     );
+      int numSamplesPerFrame    = FRAMESIZE;
+      int numSamplesPerFrameOut = FRAMESIZE/2+1;
 
-   m_powTable.resize( Filter::NBANDS+1 );
-   for ( unsigned int i = 0; i < Filter::NBANDS + 1; ++i )
-      m_powTable[i] = static_cast<unsigned int>( (pow(base, static_cast<double>(i)) - 1.0) * MINCOEF );
+      m_maxFrames = static_cast<int> ( (maxDataSize - FRAMESIZE) / OVERLAPSAMPLES + 1 );
 
-   m_pFrames = new float*[m_maxFrames];
-
-   if ( !m_pFrames )
-   {
-      ostringstream oss;
-      oss << "Allocation failed on m_pFrames. Trying to allocate <" 
-         << sizeof(float*) * m_maxFrames
-         << "> bytes";
-
-      throw std::runtime_error(oss.str());
-   }
-
-
-   for (int i = 0; i < m_maxFrames; ++i) 
-   {
-      m_pFrames[i] = new float[Filter::NBANDS];
-      if ( !m_pFrames[i] )
-         throw std::runtime_error("Allocation failed on m_pFrames");
-   }
-
-}
-
-// ----------------------------------------------------------------------
-
-OptFFT::~OptFFT()
-{
-	fftwf_destroy_plan(m_p);
-	
-	fftwf_free(m_pIn);
-	fftwf_free(m_pOut);
-
-   for (int i = 0; i < m_maxFrames; ++i)
-      delete [] m_pFrames[i];
-
-   delete [] m_pFrames;
-}
-
-// ----------------------------------------------------------------------
-
-int OptFFT::process(float* pInData, const size_t dataSize)
-{
-   // generally is the same of the one we used in the constructor (m_maxFrames) but
-   // might be less at the end of the stream
-   int nFrames = static_cast<int>( (dataSize - FRAMESIZE) / OVERLAPSAMPLES + 1 );
-
-   float* pIn_It = m_pIn;
-
-   for (int i = 0; i < nFrames; ++i)
-   {
-      memcpy( pIn_It, &pInData[i*OVERLAPSAMPLES], sizeof(float) * FRAMESIZE);
-      // apply hanning window
-      applyHann(pIn_It, FRAMESIZE);
-
-      pIn_It += FRAMESIZE;
-   }
-
-   // fill the rest with zeroes
-   if ( nFrames < m_maxFrames )
-      memset( pIn_It, 0, sizeof(float) * (m_maxFrames-nFrames) * FRAMESIZE );
-
-   fftwf_execute(m_p);
-
-   int totSamples = (FRAMESIZE/2+1) * // numSamplesPerFrameOut
-                    nFrames; // the frames actually in the input
-
-   // scaling (?)
-   float scalingFactor = static_cast<float>(FRAMESIZE) / 2.0f;
-   for (int k = 0; k < totSamples; ++k)
-   {
-      m_pOut[k][0] /= scalingFactor;
-      m_pOut[k][1] /= scalingFactor;
-   }
-
-   int frameStart;
-   unsigned int outBlocStart;
-   unsigned int outBlocEnd;
-
-	for (int i = 0; i < nFrames; ++i) 
-   {
-      frameStart = i * (FRAMESIZE/2+1);
-
-	   // compute bands
-	   for (unsigned int j = 0; j < Filter::NBANDS; j++) 
+      m_pIn  = static_cast<float*> ( fftwf_malloc(sizeof(float) * (numSamplesPerFrame * m_maxFrames) ) );
+      if ( !m_pIn )
       {
-         outBlocStart = m_powTable[j] + frameStart;
-         outBlocEnd   = m_powTable[j+1] + frameStart;
+         ostringstream oss;
+         oss << "fftwf_malloc failed on m_pIn. Trying to allocate <"
+            << sizeof(float) * (numSamplesPerFrame * m_maxFrames)
+            << "> bytes";
+         throw std::runtime_error(oss.str());
+      }
 
-		   m_pFrames[i][j] = 0;
+      m_pOut = static_cast<fftwf_complex*>( fftwf_malloc(sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames) ) );
+      if ( !m_pOut )
+      {
+         ostringstream oss;
+         oss << "fftwf_malloc failed on m_pOut. Trying to allocate <"
+            << sizeof(fftwf_complex) * (numSamplesPerFrameOut* m_maxFrames)
+            << "> bytes";
 
-		   // WARNING: We're double counting the last one here.
-		   // this bug is to match matlab's implementation bug in power2band.m
-         unsigned int end_k = outBlocEnd + static_cast<unsigned int>(MINCOEF);
-		   for (unsigned int k = outBlocStart + static_cast<unsigned int>(MINCOEF); k <= end_k; k++) 
-         {
-			   m_pFrames[i][j] += m_pOut[k][0] * m_pOut[k][0] + 
-                               m_pOut[k][1] * m_pOut[k][1];
-		   }
+         throw std::runtime_error(oss.str());
+      }
 
-		   // WARNING: if we change the k<=end to k<end above, we need to change the following line
-		   m_pFrames[i][j] /= static_cast<float>(outBlocEnd - outBlocStart + 1);   		
-	   }   
+      // in destroyed when line executed
+      m_p = fftwf_plan_many_dft_r2c(1, &numSamplesPerFrame, m_maxFrames,
+            m_pIn, &numSamplesPerFrame, 1, numSamplesPerFrame,
+            m_pOut, &numSamplesPerFrameOut,
+            1, numSamplesPerFrameOut,
+            FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+
+      if ( !m_p )
+         throw std::runtime_error ("fftwf_plan_many_dft_r2c failed");
+
+      double base = exp( log( static_cast<double>(MAXFREQ) / static_cast<double>(MINFREQ) ) /
+            static_cast<double>(Filter::NBANDS)
+            );
+
+      m_powTable.resize( Filter::NBANDS+1 );
+      for ( unsigned int i = 0; i < Filter::NBANDS + 1; ++i )
+         m_powTable[i] = static_cast<unsigned int>( (pow(base, static_cast<double>(i)) - 1.0) * MINCOEF );
+
+      m_pFrames = new float*[m_maxFrames];
+
+      if ( !m_pFrames )
+      {
+         ostringstream oss;
+         oss << "Allocation failed on m_pFrames. Trying to allocate <"
+            << sizeof(float*) * m_maxFrames
+            << "> bytes";
+
+         throw std::runtime_error(oss.str());
+      }
+
+
+      for (int i = 0; i < m_maxFrames; ++i)
+      {
+         m_pFrames[i] = new float[Filter::NBANDS];
+         if ( !m_pFrames[i] )
+            throw std::runtime_error("Allocation failed on m_pFrames");
+      }
+
    }
 
-   return nFrames;
-}
+   // ----------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+   OptFFT::~OptFFT()
+   {
+      fftwf_destroy_plan(m_p);
 
-void OptFFT::applyHann( float* pInData, const size_t dataSize )
-{
-   assert (dataSize == 2048);
+      fftwf_free(m_pIn);
+      fftwf_free(m_pOut);
 
-   for ( size_t i = 0; i < dataSize; ++i )
-      pInData[i] *= hann[i];
-}
+      for (int i = 0; i < m_maxFrames; ++i)
+         delete [] m_pFrames[i];
 
-// -----------------------------------------------------------------------------
+      delete [] m_pFrames;
+   }
+
+   // ----------------------------------------------------------------------
+
+   int OptFFT::process(float* pInData, const size_t dataSize)
+   {
+      // generally is the same of the one we used in the constructor (m_maxFrames) but
+      // might be less at the end of the stream
+      int nFrames = static_cast<int>( (dataSize - FRAMESIZE) / OVERLAPSAMPLES + 1 );
+
+      float* pIn_It = m_pIn;
+
+      for (int i = 0; i < nFrames; ++i)
+      {
+         memcpy( pIn_It, &pInData[i*OVERLAPSAMPLES], sizeof(float) * FRAMESIZE);
+         // apply hanning window
+         applyHann(pIn_It, FRAMESIZE);
+
+         pIn_It += FRAMESIZE;
+      }
+
+      // fill the rest with zeroes
+      if ( nFrames < m_maxFrames )
+         memset( pIn_It, 0, sizeof(float) * (m_maxFrames-nFrames) * FRAMESIZE );
+
+      fftwf_execute(m_p);
+
+      int totSamples = (FRAMESIZE/2+1) * // numSamplesPerFrameOut
+         nFrames; // the frames actually in the input
+
+      // scaling (?)
+      float scalingFactor = static_cast<float>(FRAMESIZE) / 2.0f;
+      for (int k = 0; k < totSamples; ++k)
+      {
+         m_pOut[k][0] /= scalingFactor;
+         m_pOut[k][1] /= scalingFactor;
+      }
+
+      int frameStart;
+      unsigned int outBlocStart;
+      unsigned int outBlocEnd;
+
+      for (int i = 0; i < nFrames; ++i)
+      {
+         frameStart = i * (FRAMESIZE/2+1);
+
+         // compute bands
+         for (unsigned int j = 0; j < Filter::NBANDS; j++)
+         {
+            outBlocStart = m_powTable[j] + frameStart;
+            outBlocEnd   = m_powTable[j+1] + frameStart;
+
+            m_pFrames[i][j] = 0;
+
+            // WARNING: We're double counting the last one here.
+            // this bug is to match matlab's implementation bug in power2band.m
+            unsigned int end_k = outBlocEnd + static_cast<unsigned int>(MINCOEF);
+            for (unsigned int k = outBlocStart + static_cast<unsigned int>(MINCOEF); k <= end_k; k++)
+            {
+               m_pFrames[i][j] += m_pOut[k][0] * m_pOut[k][0] +
+                  m_pOut[k][1] * m_pOut[k][1];
+            }
+
+            // WARNING: if we change the k<=end to k<end above, we need to change the following line
+            m_pFrames[i][j] /= static_cast<float>(outBlocEnd - outBlocStart + 1);
+         }
+      }
+
+      return nFrames;
+   }
+
+   // -----------------------------------------------------------------------------
+
+   void OptFFT::applyHann( float* pInData, const size_t dataSize )
+   {
+      assert (dataSize == 2048);
+
+      for ( size_t i = 0; i < dataSize; ++i )
+         pInData[i] *= hann[i];
+   }
+
+   // -----------------------------------------------------------------------------
 
 } // end of namespace
 
