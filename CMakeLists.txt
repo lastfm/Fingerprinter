@@ -20,7 +20,7 @@ IF(config_file STREQUAL NOTFOUND)
    SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
    # Set install path prefix
-   SET(CMAKE_INSTALL_PREFIX /usr/local)
+   SET(CMAKE_INSTALL_PREFIX /usr)
 
    # Release build
    SET(CMAKE_BUILD_TYPE release)
