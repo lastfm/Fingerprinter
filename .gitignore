@@ -1,0 +1,28 @@
+# Ignore "private" files & folders
+/@*
+
+# Ignore cachegrind output files
+cachegrind.out.*
+
+# Ignore gcc files
+*.a
+*.o
+*.so
+
+# Ignore log files
+*.log
+
+# Ignore CMake related auto-generated files
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+cmake_uninstall.cmake
+cmake_uninstall.cmake.in
+install_manifest.txt
+/config.cmake
+/configure-stamp
+/configure.json
+
+# Ignore git 'origin' file
+*.orig
