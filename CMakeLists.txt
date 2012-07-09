@@ -19,6 +19,9 @@ IF(config_file STREQUAL NOTFOUND)
    SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
    SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
+   # Library paths paths
+   LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
+
    # Release build
    SET(CMAKE_BUILD_TYPE release)
    ADD_DEFINITIONS(-O2 -DNDEBUG)
@@ -87,6 +90,7 @@ SET(lfmfp_sources
    src/fplib/FingerprintExtractor
    src/fplib/OptFFT
    )
+
 # Define static library
 ADD_LIBRARY(fplib_static STATIC
    ${lfmfp_sources}
