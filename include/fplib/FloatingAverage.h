@@ -82,6 +82,7 @@ public:
    {
       T real_sum = 0;
       const T* pCircularBuffer = m_values.get_buffer();
+      const int size = m_values.size();
       for ( int i = 0; i < size; ++i )
          real_sum += pCircularBuffer[i];
       return abs(real_sum - m_sum) / this->size();
