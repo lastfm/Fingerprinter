@@ -111,6 +111,10 @@ SET_TARGET_PROPERTIES(fplib_shared
    PROPERTIES OUTPUT_NAME fplib
    )
 
+TARGET_LINK_LIBRARIES(fplib_shared
+	samplerate
+	)
+
 # Install static library
 INSTALL(TARGETS fplib_static
    ARCHIVE DESTINATION lib
