@@ -196,13 +196,14 @@ void getFileInfo( const string& fileName, map<string, string>& urlParams, bool d
 
 // -----------------------------------------------------------------------------
 
-string fetchMetadata(int fpid, HTTPClient& client, bool justURL)
+string fetchMetadata(int fpid, HTTPClient& client, bool justURL, bool jsonFormat)
 {
-   ostringstream oss; 
+   ostringstream oss;
    oss << METADATA_SERVER_NAME
        << "?method=track.getfingerprintmetadata"
        << "&fingerprintid=" << fpid
-       << "&api_key=" << LASTFM_API_KEY;
+       << "&api_key=" << LASTFM_API_KEY
+       << "&format=json";
 
    if ( justURL )
       return oss.str();
@@ -230,22 +231,24 @@ int main(int argc, char* argv[])
       string fileName = string(argv[0]);
       size_t lastSlash = fileName.find_last_of(SLASH);
       if ( lastSlash != string::npos )
-         fileName = fileName.substr(lastSlash+1);      
+         fileName = fileName.substr(lastSlash+1);
 
       cout << fileName << " (" << PUBLIC_CLIENT_NAME << ")\n"
            << "A minimal fingerprint client, public release.\n"
-           << "Copyright (C) 2007-2010 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")\n\n"
+           << "Copyright (C) 2007-2014 by Last.fm (MIR) - Build: " << __DATE__ << " (" << __TIME__ << ")\n\n"
            << "Usage:\n"
            << fileName << " [options] yourMp3File.mp3\n"
            << "Available options:\n"
            << " -nometadata: will only return the id of the fingerprint\n"
-           << " -url: will output the url of the metadata\n";
+           << " -url: will output the url of the metadata\n"
+           << " -json: will output in json format\n";
       exit(0);
    }
 
    string mp3FileName;
    bool wantMetadata = true;
    bool justUrl = false;
+   bool jsonFormat = false;
 
    bool doTagLib = true;
    int forceDuration = 0;
@@ -268,6 +271,8 @@ int main(int argc, char* argv[])
          wantMetadata = false;
       else if ( arg == "-url" )
          justUrl = true;
+      else if ( arg == "-json" )
+         jsonFormat = true;
       else if ( arg == "-fplocation" && (i+1) < argc )
       {
          ++i;
@@ -412,7 +417,7 @@ int main(int argc, char* argv[])
          string state;
          iss >> state;
          if ( state == "FOUND" )
-            c = fetchMetadata(fpid, client, justUrl);
+            c = fetchMetadata(fpid, client, justUrl, jsonFormat);
          else if ( state == "NEW" )
          {
             cout << "Was not found! Now added, thanks! :)" << endl;
