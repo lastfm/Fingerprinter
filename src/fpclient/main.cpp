@@ -202,8 +202,10 @@ string fetchMetadata(int fpid, HTTPClient& client, bool justURL, bool jsonFormat
    oss << METADATA_SERVER_NAME
        << "?method=track.getfingerprintmetadata"
        << "&fingerprintid=" << fpid
-       << "&api_key=" << LASTFM_API_KEY
-       << "&format=json";
+       << "&api_key=" << LASTFM_API_KEY;
+
+   if ( jsonFormat )
+       oss << "&format=json";
 
    if ( justURL )
       return oss.str();
